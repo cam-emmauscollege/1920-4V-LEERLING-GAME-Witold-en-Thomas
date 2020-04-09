@@ -17,10 +17,11 @@
 /* globale variabelen die je gebruikt in je game */
 /* ********************************************* */
 
-const UITLEG = 0;
+const STARTSCHERM = 0;
 const SPELEN = 1;
 const GAMEOVER = 2;
-var spelStatus = SPELEN;
+const UITLEG = 3
+var spelStatus = STARTSCHERM;
 
 var spelerX = 200; // x-positie van speler
 var spelerY = 100; // y-positie van speler
@@ -153,7 +154,40 @@ function setup() {
   background('blue');
 }
 
+var xPlayButton = 540;
+var yPlayButton = 100;
+var speelButton = function() {
+    fill(3, 252, 61);
+    rect(xPlayButton,yPlayButton,200, 80);
+    fill(0,0,0);
+    textSize(50);
+    text("Spelen",560,115,730,170);
+    if(mouseIsPressed && mouseX < xPlayButton + 200 && mouseY < yPlayButton + 80 && mouseX > xPlayButton && mouseY > yPlayButton) {
+        spelStatus = SPELEN;
+    } 
+}
 
+var xUitlegButton = 540;
+var yUitlegButton = 200;
+var uitlegButton = function () {
+    fill(3, 252, 61);
+    rect(xUitlegButton,yUitlegButton,200,80);
+    fill(0,0,0);
+    textSize(50);
+    text("Uitleg",575,215,730,270);
+    if(mouseIsPressed && mouseX < xUitlegButton + 200 && mouseX > xUitlegButton && mouseY < yUitlegButton + 80 && mouseY > yUitlegButton) {
+        spelStatus = UITLEG;
+    }
+}
+
+ var uitlegScherm = function () {
+    fill(3, 252, 61);
+    rect(180,100,900,500);
+    fill(0,0,0);
+    text("Hier komt de uitleg",200,150,850,480);
+
+
+ }
 /**
  * draw
  * de code in deze functie wordt meerdere keren per seconde
@@ -185,5 +219,32 @@ function draw() {
         spelStatus = GAMEOVER;
       }
       break;
+    case STARTSCHERM:
+      	speelButton();
+        uitlegButton();
+
+
+
+
+    break;
+
+
+    case GAMEOVER:
+
+
+
+
+    break;
+
+
+    case UITLEG:
+        tekenVeld();
+        uitlegScherm();
+        
+
+
+
+    break;
   }
+  
 }
