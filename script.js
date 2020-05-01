@@ -1,4 +1,5 @@
-/// @ts-check
+// @ts-nocheck
+
 /// <reference path=".gitpod/p5.global-mode.d.ts" />
 "use strict";
 
@@ -21,10 +22,11 @@ const STARTSCHERM = 0;
 const SPELEN = 1;
 const GAMEOVER = 2;
 const UITLEG = 3
+
 var spelStatus = STARTSCHERM;
 
-var spelerX = 200; // x-positie van speler
-var spelerY = 100; // y-positie van speler
+var spelerKolom = 3; // x-positie van speler
+var spelerY = 4; // y-positie van speler
 
 var kogelX = 0;    // x-positie van kogel
 var kogelY = 0;    // y-positie van kogel
@@ -36,7 +38,29 @@ var score = 0; // aantal behaalde punten
 
 
 
+var tegelBreedte = 40, tegelHoogte = 40;
+var veldBreedte = 1280 / tegelBreedte, veldHoogte = 720 / tegelHoogte;
 
+var veld = [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //1
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //2
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1], //3
+        [1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1], //4
+        [1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1], //5
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1], //6
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1], //7
+        [1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1], //8
+        [1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1], //9
+        [1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1], //10
+        [1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1], //11
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1], //12
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1], //13
+        [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //14        
+        [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //15
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //16
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //17
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //18
+]; // dit is het veld
 
 /* ********************************************* */
 /*      functies die je gebruikt in je game      */
@@ -46,12 +70,29 @@ var score = 0; // aantal behaalde punten
 /**
  * Tekent het speelveld
  */
+
+
+var tekenTegel = function(kolom, rij) {
+    if (veld[rij][kolom] === "0") {
+    fill(255, 255, 255);
+  }
+  else if (veld[rij][kolom] === "1") {
+    fill(0, 0, 0);
+  }
+  rect(kolom * 40, rij * 40, 40, 40);
+}
+
 var tekenVeld = function () {
-  fill("purple");
-  rect(20, 20, width - 2 * 20, height - 2 * 20);
+    stroke(255, 211, 0);
+    strokeWeight(1);
+    rect(20, 20, width - 2 * 20, height - 2 * 20);
+
+    for (var kolom = 0; kolom < veldBreedte; kolom += 1) {
+        for (var rij = 0; rij < veldHoogte; rij += 1) {
+         tekenTegel(kolom, rij); 
+        } 
+    }
 };
-
-
 /**
  * Tekent de vijand
  * @param {number} x x-coördinaat
@@ -79,9 +120,9 @@ var tekenKogel = function(x, y) {
  * @param {number} x x-coördinaat
  * @param {number} y y-coördinaat
  */
-var tekenSpeler = function(x, y) {
-  fill("white");
-  ellipse(x, y, 50, 50);
+var tekenSpeler = function(spelerKolom, spelerRij) {
+  fill("green");
+  ellipse(spelerKolom * 40 + 20, spelerRij * 40 + 20, 30, 30);
 };
 
 
@@ -151,7 +192,7 @@ function setup() {
   createCanvas(1280, 720);
 
   // Kleur de achtergrond blauw, zodat je het kunt zien
-  background('blue');
+  background(50, 50, 50);
 }
 
 var xPlayButton = 540;
@@ -194,30 +235,13 @@ var uitlegButton = function () {
  * uitgevoerd door de p5 library, nadat de setup functie klaar is
  */
 function draw() {
+  console.log("start draw");
   switch (spelStatus) {
     case SPELEN:
-      beweegVijand();
-      beweegKogel();
-      beweegSpeler();
+        tekenVeld();
+        tekenSpeler(spelerKolom, spelerRij);
       
-      if (checkVijandGeraakt()) {
-        // punten erbij
-        // nieuwe vijand maken
-      }
-      
-      if (checkSpelerGeraakt()) {
-        // leven eraf of gezondheid verlagen
-        // eventueel: nieuwe speler maken
-      }
 
-      tekenVeld();
-      tekenVijand(vijandX, vijandY);
-      tekenKogel(kogelX, kogelY);
-      tekenSpeler(spelerX, spelerY);
-
-      if (checkGameOver()) {
-        spelStatus = GAMEOVER;
-      }
       break;
     case STARTSCHERM:
       	speelButton();
