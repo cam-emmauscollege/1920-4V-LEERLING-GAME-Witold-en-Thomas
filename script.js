@@ -51,28 +51,19 @@ var tekenVeld = function () {
   rect(20, 20, width - 2 * 20, height - 2 * 20);
 };
 
-
-/**
- * Tekent de vijand
- * @param {number} x x-coördinaat
- * @param {number} y y-coördinaat
- */
-var tekenVijand = function(x, y) {
-    
-
-};
 var schade = 0;
 var hoeveelSchade = function () {
     var omhoogOmlaag = Math.floor(Math.random() * 2 + 1);
-    println(x);
+    console.log(omhoogOmlaag);
 
     var rngOmlaag = function() {
-        println(schade);
+        schade = 30/* test */ * 1 + random(0,0.25);
+        console.log(schade);
     };
 
     var rngOmhoog = function() {
-       
-        println(schade);
+        schade = 30 /* test */ * 1 - random(0,0.25);
+        console.log(schade);
     };
 
     if (omhoogOmlaag = 1) {
@@ -85,34 +76,16 @@ var hoeveelSchade = function () {
     
 };
 
-/**
- * Tekent de kogel of de bal
- * @param {number} x x-coördinaat
- * @param {number} y y-coördinaat
- */
-var tekenKogel = function(x, y) {
 
 
-};
 
-
-/**
- * Tekent de speler
- * @param {number} x x-coördinaat
- * @param {number} y y-coördinaat
- */
 var tekenSpeler = function(x, y) {
   fill("white");
   ellipse(x, y, 50, 50);
 };
 
 
-/**
- * Updatet globale variabelen met positie van vijand of tegenspeler
- */
-var beweegVijand = function() {
-    
-};
+
 
 
 /**
@@ -218,11 +191,11 @@ var uitlegButton = function () {
 function draw() {
   switch (spelStatus) {
     case SPELEN:
-      beweegVijand();
+      
       beweegKogel();
       beweegSpeler();
-      
       hoeveelSchade();
+    
       if (checkVijandGeraakt()) {
         // punten erbij
         // nieuwe vijand maken
@@ -234,8 +207,8 @@ function draw() {
       }
 
       tekenVeld();
-      tekenVijand(vijandX, vijandY);
-      tekenKogel(kogelX, kogelY);
+      
+      
       tekenSpeler(spelerX, spelerY);
 
       if (checkGameOver()) {
