@@ -61,7 +61,29 @@ var tekenVijand = function(x, y) {
     
 
 };
+var schade = 0;
+var hoeveelSchade = function () {
+    var omhoogOmlaag = Math.floor(Math.random() * 2 + 1);
+    println(x);
 
+    var rngOmlaag = function() {
+        println(schade);
+    };
+
+    var rngOmhoog = function() {
+       
+        println(schade);
+    };
+
+    if (omhoogOmlaag = 1) {
+        rngOmlaag()
+    }
+
+    if (omhoogOmlaag = 2) {
+        rngOmhoog()
+    }
+    
+};
 
 /**
  * Tekent de kogel of de bal
@@ -200,6 +222,7 @@ function draw() {
       beweegKogel();
       beweegSpeler();
       
+      hoeveelSchade();
       if (checkVijandGeraakt()) {
         // punten erbij
         // nieuwe vijand maken
