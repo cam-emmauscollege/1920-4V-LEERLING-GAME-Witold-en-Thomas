@@ -26,7 +26,7 @@ const UITLEG = 3
 var spelStatus = STARTSCHERM;
 
 var spelerKolom = 3; // x-positie van speler
-var spelerY = 4; // y-positie van speler
+var spelerRij = 4; // y-positie van speler
 
 var kogelX = 0;    // x-positie van kogel
 var kogelY = 0;    // y-positie van kogel
@@ -73,10 +73,10 @@ var veld = [
 
 
 var tekenTegel = function(kolom, rij) {
-    if (veld[rij][kolom] === "0") {
+    if (veld[rij][kolom] === 0) {
     fill(255, 255, 255);
   }
-  else if (veld[rij][kolom] === "1") {
+  else if (veld[rij][kolom] === 1) {
     fill(0, 0, 0);
   }
   rect(kolom * 40, rij * 40, 40, 40);
