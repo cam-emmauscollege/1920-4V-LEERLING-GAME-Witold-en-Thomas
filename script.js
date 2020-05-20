@@ -25,14 +25,14 @@ const UITLEG = 3
 
 var spelStatus = STARTSCHERM;
 
-var spelerKolom = 3; // x-positie van speler
-var spelerRij = 4; // y-positie van speler
+var spelerKolom = 1; // x-positie van speler
+var spelerRij = 1; // y-positie van speler
 
 var kogelX = 0;    // x-positie van kogel
 var kogelY = 0;    // y-positie van kogel
 
-var vijandX = 0;   // x-positie van vijand
-var vijandY = 0;   // y-positie van vijand
+var vijandKolom = 24;   // x-positie van vijand
+var vijandRij = 10;   // y-positie van vijand
 
 var score = 0; // aantal behaalde punten
 
@@ -75,9 +75,10 @@ var veld = [
 var tekenTegel = function(kolom, rij) {
     if (veld[rij][kolom] === 0) {
     fill(255, 255, 255);
-  }
-  else if (veld[rij][kolom] === 1) {
+  } else if (veld[rij][kolom] === 1) {
     fill(0, 0, 0);
+  } else if (veld[rij][kolom] === 2) {
+    fill(100, 255, 100);
   }
   rect(kolom * 40, rij * 40, 40, 40);
 }
@@ -92,19 +93,26 @@ var tekenVeld = function () {
          tekenTegel(kolom, rij); 
         } 
     }
+    //actiekolom
     fill(255, 0, 0);
-    rect(1040, 0, 1280, 720);
-};
-/**
- * Tekent de vijand
- * @param {number} x x-coördinaat
- * @param {number} y y-coördinaat
- */
-var tekenVijand = function(x, y) {
-    
+    rect(1040, 0, 240, 720);
 
-};
+    //einde beurtknop
+    fill(200, 0, 150);
+    rect(1040, 620, 240, 720);
+    fill(0, 0, 0);
+    textSize(35);
+    text("Einde beurt", 1070, 680);
 
+    //actieknoppen
+    text("Acties", 1100, 50);
+    line(1040, 60, 1280, 60);
+    //bewegen
+    fill(255, 255, 255);
+    rect(1050, 80, 220, 50);
+    fill(0, 0, 0);
+    text("Bewegen", 1085, 117);
+};
 
 /**
  * Tekent de kogel of de bal
@@ -123,8 +131,13 @@ var tekenKogel = function(x, y) {
  * @param {number} y y-coördinaat
  */
 var tekenSpeler = function(spelerKolom, spelerRij) {
-  fill("green");
+  fill(0, 255, 100);
   ellipse(spelerKolom * 40 + 20, spelerRij * 40 + 20, 30, 30);
+};
+
+var tekenVijand = function(vijandKolom, vijandRij) {
+  fill(255, 0, 0);
+  ellipse(vijandKolom * 40 + 20, vijandRij * 40 + 20, 30, 30);
 };
 
 
@@ -148,8 +161,10 @@ var beweegKogel = function() {
  * Kijkt wat de toetsen/muis etc zijn.
  * Updatet globale variabele spelerX en spelerY
  */
-var beweegSpeler = function() {
-
+var beweegActie = function() {
+    if(mouseX >= kolom * tegelBreedte && mouseX <= kolom * tegelBreedte + tegelBreedte && mouseY >= rij * tegelHoogte && mouseY <= rij * tegelHoogte + tegelHoogte ) {
+        veld[rij][kolom] === 2
+    }
 };
 
 
@@ -242,7 +257,13 @@ function draw() {
     case SPELEN:
         tekenVeld();
         tekenSpeler(spelerKolom, spelerRij);
-      
+        tekenVijand(vijandKolom, vijandRij);
+
+        if(keyIsPressed) {
+            if(key === "m") {
+                beweegActie();
+            }
+        }
 
       break;
     case STARTSCHERM:
