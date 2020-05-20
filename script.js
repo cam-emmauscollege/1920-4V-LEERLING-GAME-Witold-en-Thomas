@@ -90,14 +90,12 @@ var hoeveelSchade = function () {
         rngOmlaag()
     }
 
-<<<<<<< HEAD
     if (omhoogOmlaag = 2) {
         rngOmhoog()
     }
     
 };
 
-=======
 var tekenTegel = function(kolom, rij) {
     if (veld[rij][kolom] === 0) {
     fill(255, 255, 255);
@@ -146,15 +144,12 @@ var tekenVeld = function () {
  * @param {number} y y-coördinaat
  */
 var tekenKogel = function(x, y) {
->>>>>>> mapMaken
 
 
 
-<<<<<<< HEAD
 var tekenSpeler = function(x, y) {
   fill("white");
   ellipse(x, y, 50, 50);
-=======
 
 /**
  * Tekent de speler
@@ -169,7 +164,6 @@ var tekenSpeler = function(spelerKolom, spelerRij) {
 var tekenVijand = function(vijandKolom, vijandRij) {
   fill(255, 0, 0);
   ellipse(vijandKolom * 40 + 20, vijandRij * 40 + 20, 30, 30);
->>>>>>> mapMaken
 };
 
 
@@ -282,7 +276,6 @@ function draw() {
   console.log("start draw");
   switch (spelStatus) {
     case SPELEN:
-<<<<<<< HEAD
       
       beweegKogel();
       beweegSpeler();
@@ -306,7 +299,6 @@ function draw() {
       if (checkGameOver()) {
         spelStatus = GAMEOVER;
       }
-=======
         tekenVeld();
         tekenSpeler(spelerKolom, spelerRij);
         tekenVijand(vijandKolom, vijandRij);
@@ -317,7 +309,6 @@ function draw() {
             }
         }
 
->>>>>>> mapMaken
       break;
     case STARTSCHERM:
       	speelButton();
