@@ -145,13 +145,6 @@ var tekenVeld = function () {
  * @param {number} y y-coördinaat
  */
 
-
-
-
-var tekenSpeler = function(x, y) {
-  fill("white");
-  ellipse(x, y, 50, 50);
-}
 /**
  * Tekent de speler
  * @param {number} x x-coördinaat
@@ -292,8 +285,6 @@ function draw() {
 
       tekenVeld();
       
-      
-      tekenSpeler(spelerX, spelerY);
 
       if (checkGameOver()) {
         spelStatus = GAMEOVER;
