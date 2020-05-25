@@ -143,14 +143,14 @@ var tekenVeld = function () {
  * @param {number} x x-coördinaat
  * @param {number} y y-coördinaat
  */
-var tekenKogel = function(x, y) {
+
 
 
 
 var tekenSpeler = function(x, y) {
   fill("white");
   ellipse(x, y, 50, 50);
-
+}
 /**
  * Tekent de speler
  * @param {number} x x-coördinaat
@@ -230,7 +230,7 @@ function setup() {
   createCanvas(1280, 720);
 
   // Kleur de achtergrond blauw, zodat je het kunt zien
-  background(50, 50, 50);
+  background('blue');
 }
 
 var xPlayButton = 540;
@@ -338,4 +338,4 @@ function draw() {
     break;
   }
   
-} } }
+}
