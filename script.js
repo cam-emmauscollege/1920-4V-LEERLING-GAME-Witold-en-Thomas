@@ -22,7 +22,8 @@ const STARTSCHERM = 0;
 const SPELEN = 1;
 const GAMEOVER = 2;
 const UITLEG = 3
-
+const xPlayButton = 540;
+const yPlayButton = 100;
 var spelStatus = STARTSCHERM;
 
 var spelerKolom = 1; // x-positie van speler
@@ -233,8 +234,7 @@ function setup() {
   background('blue');
 }
 
-var xPlayButton = 540;
-var yPlayButton = 100;
+
 var speelButton = function() {
     fill(3, 252, 61);
     rect(xPlayButton,yPlayButton,200, 80);
@@ -278,7 +278,6 @@ function draw() {
     case SPELEN:
       
       beweegKogel();
-      beweegSpeler();
       hoeveelSchade();
     
       if (checkVijandGeraakt()) {
