@@ -30,9 +30,9 @@ const yPlayButton = 100;
 var spelStatus = STARTSCHERM;
 
 var schade = 0;
-// kolom is verticaal, rij is horizontaal
-var spelerKolom = 2; // x-positie van speler
-var spelerRij = 3; // y-positie van speler
+// kolom is verticale verplaatsing, rij is horizontale verplaatsing
+var spelerKolom = 1; // x-positie van speler
+var spelerRij = 5; // y-positie van speler
 
 var kleurTegelNulR = 0; // R-waarde tegels met var 0
 var kleurTegelNulG = 0; // G-waarde tegels met var 0
@@ -48,7 +48,7 @@ var kogelY = 0;    // y-positie van kogel
 var vijandKolom = 2;   // x-positie van vijand
 var vijandRij = 5;   // y-positie van vijand
 
-
+var selecteerVak = false;
 
 var score = 0; // aantal behaalde punten
 
@@ -181,6 +181,25 @@ var tekenVeld = function () {
 
     //teken aanvalknop
     aanvalKnop();
+
+    if(aanvalActie === true) {
+        if( mouseIsPressed &&
+            mouseX >= (spelerKolom) * 40 && 
+            mouseX <= (spelerKolom + 1) * 40 &&
+            mouseY >= (spelerRij + 1) * 40 &&
+            mouseY <= (spelerRij + 2) * 40){
+                selecteerVak = true;
+            }
+        
+        if(keyIsPressed === true && keyCode === ESCAPE) {
+            selecteerVak = false;
+        }
+
+        if(selecteerVak === true) {
+            fill(0, 250, 42);
+            rect(100,100,300,300);
+        }
+    }
 };
 
 /**
@@ -208,37 +227,38 @@ var tekenVijand = function(vijandKolom, vijandRij) {
 var aanvallen = function() {
     // aanvalmogelijkheden -- vakjes die aangevallen kunnen worden veranderen van kleur
     if (aanvalActie === true) {
-
-        if(veld[spelerKolom + aanvalBereik][spelerRij] === 0) {
-            veld[spelerKolom + aanvalBereik].splice(spelerRij,1,3);
+        // onder speler
+        if(veld[spelerRij + aanvalBereik][spelerKolom] === 0) {
+            veld[spelerRij + aanvalBereik].splice(spelerKolom,1,3);
+            
         }
-
-        if(veld[spelerKolom - aanvalBereik][spelerRij] === 0) {
-            veld[spelerKolom - aanvalBereik].splice(spelerRij,1,3);
+        // boven speler
+        if(veld[spelerRij - aanvalBereik][spelerKolom] === 0) {
+            veld[spelerRij - aanvalBereik].splice(spelerKolom,1,3);
         }
-
-        if(veld[spelerKolom][spelerRij - aanvalBereik] === 0) {
-            veld[spelerKolom].splice(spelerRij - aanvalBereik,1,3)
+        // links speler
+        if(veld[spelerRij][spelerKolom - aanvalBereik] === 0) {
+            veld[spelerRij].splice(spelerKolom - aanvalBereik,1,3)
         }
-
-        if(veld[spelerKolom][spelerRij + aanvalBereik] === 0) {
-            veld[spelerKolom].splice(spelerRij + aanvalBereik,1,3)
+        // rechts speler
+        if(veld[spelerRij][spelerKolom + aanvalBereik] === 0) {
+            veld[spelerRij].splice(spelerKolom + aanvalBereik,1,3)
         }
-        
-        if(veld[spelerKolom + aanvalBereik][spelerRij + aanvalBereik] === 0) {
-            veld[spelerKolom + aanvalBereik].splice(spelerRij + aanvalBereik,1,3)
+        // rechtsonder speler
+        if(veld[spelerRij + aanvalBereik][spelerKolom + aanvalBereik] === 0) {
+            veld[spelerRij + aanvalBereik].splice(spelerKolom + aanvalBereik,1,3)
         }
-
-        if(veld[spelerKolom + aanvalBereik][spelerRij - aanvalBereik] === 0) {
-            veld[spelerKolom + aanvalBereik].splice(spelerRij - aanvalBereik,1,3)
+        // linksonder speler
+        if(veld[spelerRij + aanvalBereik][spelerKolom - aanvalBereik] === 0) {
+            veld[spelerRij + aanvalBereik].splice(spelerKolom - aanvalBereik,1,3)
         }
-
-        if(veld[spelerKolom - aanvalBereik][spelerRij - aanvalBereik] === 0) {
-            veld[spelerKolom - aanvalBereik].splice(spelerRij - aanvalBereik,1,3)
+        // linksboven speler
+        if(veld[spelerRij - aanvalBereik][spelerKolom - aanvalBereik] === 0) {
+            veld[spelerRij - aanvalBereik].splice(spelerKolom - aanvalBereik,1,3)
         }
-
-        if(veld[spelerKolom + aanvalBereik][spelerRij - aanvalBereik] === 0){
-            veld[spelerKolom - aanvalBereik].splice(spelerRij - aanvalBereik,1,3)
+        // rechtsboven speler
+        if(veld[spelerRij - aanvalBereik][spelerKolom + aanvalBereik] === 0){
+            veld[spelerRij - aanvalBereik].splice(spelerKolom + aanvalBereik,1,3)
         }
     }    
 }
@@ -351,7 +371,6 @@ function draw() {
   console.log("start draw");
   switch (spelStatus) {
     case SPELEN:
-      
       beweegKogel();
       //hoeveelSchade();
     
@@ -365,7 +384,7 @@ function draw() {
         // eventueel: nieuwe speler maken
       }
 
-      tekenVeld();
+      
       
 
       if (checkGameOver()) {
@@ -375,6 +394,7 @@ function draw() {
         tekenSpeler(spelerKolom, spelerRij);
         tekenVijand(vijandKolom, vijandRij);
         aanvallen();
+        
 
         if(keyIsPressed) {
             if(key === "m") {
