@@ -1,5 +1,7 @@
 // @ts-nocheck
 
+// VERSIE 0.2
+
 /// <reference path=".gitpod/p5.global-mode.d.ts" />
 "use strict";
 
@@ -24,16 +26,29 @@ const GAMEOVER = 2;
 const UITLEG = 3
 const xPlayButton = 540;
 const yPlayButton = 100;
+
 var spelStatus = STARTSCHERM;
 
-var spelerKolom = 1; // x-positie van speler
-var spelerRij = 1; // y-positie van speler
+var schade = 0;
+// kolom is verticaal, rij is horizontaal
+var spelerKolom = 2; // x-positie van speler
+var spelerRij = 3; // y-positie van speler
+
+var kleurTegelNulR = 0; // R-waarde tegels met var 0
+var kleurTegelNulG = 0; // G-waarde tegels met var 0
+var kleurTegelNulB = 0; // B-waarde tegels met var 0
+
+var aanvalBereik = 1; // hoeveel tegels om je heen kan je aanvallen
+var aanvalActie = false; // ben je aan het aanvallen ja of nee
+var aanvalTekst = "Aanvallen"; // tekst aanvalknop
 
 var kogelX = 0;    // x-positie van kogel
 var kogelY = 0;    // y-positie van kogel
 
-var vijandKolom = 24;   // x-positie van vijand
-var vijandRij = 10;   // y-positie van vijand
+var vijandKolom = 2;   // x-positie van vijand
+var vijandRij = 5;   // y-positie van vijand
+
+
 
 var score = 0; // aantal behaalde punten
 
@@ -72,16 +87,19 @@ var veld = [
  * Tekent het speelveld
  */
 
-var schade = 0;
+// functie die berekent hoeveel schade je doet als je aanvalt.
 var hoeveelSchade = function () {
+    // doe je meer of minder schade dan de standaardschade?
     var omhoogOmlaag = Math.floor(Math.random() * 2 + 1);
     console.log(omhoogOmlaag);
 
+    // hoeveel minder schade doe je dan?
     var rngOmlaag = function() {
         schade = 30/* test */ * 1 + random(0,0.25);
         console.log(schade);
     };
 
+    // hoeveel meer schade doe je dan?
     var rngOmhoog = function() {
         schade = 30 /* test */ * 1 - random(0,0.25);
         console.log(schade);
@@ -95,15 +113,37 @@ var hoeveelSchade = function () {
         rngOmhoog()
     }
     
-};
+}
 
+var aanvalKnop = function() {
+    // aanvalknop -- als je hierop klikt kan je de vijand aanvallen.
+    fill(255, 255, 255);
+    rect(1050, 150, 220, 50);
+    fill(0, 0, 0);
+    text(aanvalTekst, 1083, 186);
+
+    if (mouseIsPressed && mouseY >= 150 && mouseY <= 200 && mouseX >= 1050 && mouseX <= 1270){
+        aanvalActie = true;
+        aanvalTekst = "bezig";
+        fill(255, 255, 255);
+        rect(1050, 150, 220, 50);
+        fill(0, 0, 0);
+        text(aanvalTekst, 1083, 186);
+        // fill(0,0,0);
+        // rect(100,100,300,300);
+    }
+}
+
+// tekent de vakjes als deze functie wordt aangeroepen
 var tekenTegel = function(kolom, rij) {
     if (veld[rij][kolom] === 0) {
     fill(255, 255, 255);
   } else if (veld[rij][kolom] === 1) {
-    fill(0, 0, 0);
+    fill(kleurTegelNulR, kleurTegelNulG, kleurTegelNulB);
   } else if (veld[rij][kolom] === 2) {
     fill(100, 255, 100);
+  } else if (veld[rij][kolom] === 3) {
+      fill(5,50,250);
   }
   rect(kolom * 40, rij * 40, 40, 40);
 }
@@ -112,13 +152,14 @@ var tekenVeld = function () {
     stroke(255, 211, 0);
     strokeWeight(1);
     rect(20, 20, width - 2 * 20, height - 2 * 20);
-
+    // genereert het aantal vakjes horizontaal(rij) en verticaal(kolom)
     for (var kolom = 0; kolom < veldBreedte; kolom += 1) {
         for (var rij = 0; rij < veldHoogte; rij += 1) {
          tekenTegel(kolom, rij); 
         } 
     }
     //actiekolom
+    noStroke();
     fill(255, 0, 0);
     rect(1040, 0, 240, 720);
 
@@ -137,6 +178,9 @@ var tekenVeld = function () {
     rect(1050, 80, 220, 50);
     fill(0, 0, 0);
     text("Bewegen", 1085, 117);
+
+    //teken aanvalknop
+    aanvalKnop();
 };
 
 /**
@@ -160,6 +204,44 @@ var tekenVijand = function(vijandKolom, vijandRij) {
   ellipse(vijandKolom * 40 + 20, vijandRij * 40 + 20, 30, 30);
 };
 
+
+var aanvallen = function() {
+    // aanvalmogelijkheden -- vakjes die aangevallen kunnen worden veranderen van kleur
+    if (aanvalActie === true) {
+
+        if(veld[spelerKolom + aanvalBereik][spelerRij] === 0) {
+            veld[spelerKolom + aanvalBereik].splice(spelerRij,1,3);
+        }
+
+        if(veld[spelerKolom - aanvalBereik][spelerRij] === 0) {
+            veld[spelerKolom - aanvalBereik].splice(spelerRij,1,3);
+        }
+
+        if(veld[spelerKolom][spelerRij - aanvalBereik] === 0) {
+            veld[spelerKolom].splice(spelerRij - aanvalBereik,1,3)
+        }
+
+        if(veld[spelerKolom][spelerRij + aanvalBereik] === 0) {
+            veld[spelerKolom].splice(spelerRij + aanvalBereik,1,3)
+        }
+        
+        if(veld[spelerKolom + aanvalBereik][spelerRij + aanvalBereik] === 0) {
+            veld[spelerKolom + aanvalBereik].splice(spelerRij + aanvalBereik,1,3)
+        }
+
+        if(veld[spelerKolom + aanvalBereik][spelerRij - aanvalBereik] === 0) {
+            veld[spelerKolom + aanvalBereik].splice(spelerRij - aanvalBereik,1,3)
+        }
+
+        if(veld[spelerKolom - aanvalBereik][spelerRij - aanvalBereik] === 0) {
+            veld[spelerKolom - aanvalBereik].splice(spelerRij - aanvalBereik,1,3)
+        }
+
+        if(veld[spelerKolom + aanvalBereik][spelerRij - aanvalBereik] === 0){
+            veld[spelerKolom - aanvalBereik].splice(spelerRij - aanvalBereik,1,3)
+        }
+    }    
+}
 
 
 
@@ -271,7 +353,7 @@ function draw() {
     case SPELEN:
       
       beweegKogel();
-      hoeveelSchade();
+      //hoeveelSchade();
     
       if (checkVijandGeraakt()) {
         // punten erbij
@@ -292,6 +374,7 @@ function draw() {
         tekenVeld();
         tekenSpeler(spelerKolom, spelerRij);
         tekenVijand(vijandKolom, vijandRij);
+        aanvallen();
 
         if(keyIsPressed) {
             if(key === "m") {
