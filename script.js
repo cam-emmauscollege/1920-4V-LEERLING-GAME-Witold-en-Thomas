@@ -31,8 +31,8 @@ var spelStatus = STARTSCHERM;
 
 var schade = 0;
 // kolom is verticale verplaatsing, rij is horizontale verplaatsing
-var spelerKolom = 1; // x-positie van speler
-var spelerRij = 5; // y-positie van speler
+var spelerKolom = 2; // x-positie van speler
+var spelerRij = 8; // y-positie van speler
 
 var kleurTegelNulR = 0; // R-waarde tegels met var 0
 var kleurTegelNulG = 0; // G-waarde tegels met var 0
@@ -48,7 +48,7 @@ var kogelY = 0;    // y-positie van kogel
 var vijandKolom = 2;   // x-positie van vijand
 var vijandRij = 5;   // y-positie van vijand
 
-var selecteerVak = false;
+//aanvalvakken selecteerstatus
 
 var score = 0; // aantal behaalde punten
 
@@ -56,6 +56,8 @@ var score = 0; // aantal behaalde punten
 
 var tegelBreedte = 40, tegelHoogte = 40;
 var veldBreedte = 1280 / tegelBreedte - 6, veldHoogte = 720 / tegelHoogte;
+
+var vakSelectieStatus = [0,0,0,0,0,0,0,0]
 
 var veld = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //1
@@ -129,11 +131,87 @@ var aanvalKnop = function() {
         rect(1050, 150, 220, 50);
         fill(0, 0, 0);
         text(aanvalTekst, 1083, 186);
-        // fill(0,0,0);
-        // rect(100,100,300,300);
     }
 }
+var aanvalVakSelectie = function() {
+    if(aanvalActie === true) {
+        
+        // een vak deselecteren
+        if(keyIsPressed === true && keyCode === ESCAPE) {
+            vakSelectieStatus.splice(0,8,0,0,0,0,0,0,0,0)
+        }
 
+        if(vakSelectieStatus[0]=== 0) {
+            if(veld[spelerRij + aanvalBereik][spelerKolom] === 0 || veld[spelerRij + aanvalBereik][spelerKolom] === 4){
+            veld[spelerRij + aanvalBereik].splice(spelerKolom,1,3)
+            }
+        }
+
+        if(vakSelectieStatus[1] === 0) {
+            if(veld[spelerRij][spelerKolom + aanvalBereik] === 0 || veld[spelerRij][spelerKolom + aanvalBereik] === 4 )
+            veld[spelerRij].splice(spelerKolom + aanvalBereik,1,3)
+        }
+
+        if(vakSelectieStatus[2] === 0) {
+            veld[spelerRij - aanvalBereik].splice(spelerKolom,1,3)
+        }
+
+        if(vakSelectieStatus[3] === 0) {
+            veld[spelerRij].splice(spelerKolom - aanvalBereik,1,3)
+        }
+
+        // vak onder speler selecteren
+        if (mouseIsPressed &&
+            mouseX >= (spelerKolom) * 40 && 
+            mouseX <= (spelerKolom + 1) * 40 &&
+            mouseY >= (spelerRij + 1) * 40 &&
+            mouseY <= (spelerRij + 2) * 40){
+                vakSelectieStatus.splice(0,1,1);
+        }
+        
+            if(vakSelectieStatus[0] === 1) {
+            veld[spelerRij + aanvalBereik].splice(spelerKolom,1,4)
+        }
+
+        // vak rechts speler selecteren
+        if (mouseIsPressed &&
+            mouseX <= (spelerKolom + 2) * 40 &&
+            mouseX >= (spelerKolom + 1) * 40 &&
+            mouseY <= (spelerRij + 1) * 40 &&
+            mouseY >= (spelerRij) * 40) {
+                vakSelectieStatus.splice(1,1,1)
+        }
+        
+        if(vakSelectieStatus[1] === 1) {
+            veld[spelerRij].splice(spelerKolom + aanvalBereik,1,4)
+        }
+
+        // vak boven speler selecteren
+        if (mouseIsPressed && 
+            mouseX <= (spelerKolom + 1) * 40 &&
+            mouseX >= (spelerKolom) * 40 &&
+            mouseY <= (spelerRij) * 40 &&
+            mouseY >= (spelerRij - 1) * 40 ){
+                vakSelectieStatus.splice(2,1,1)
+        }
+
+        if(vakSelectieStatus[2] === 1) {
+            veld[spelerRij - aanvalBereik].splice(spelerKolom,1,4)
+        }
+        
+        // vak links speler selecteren veld[spelerRij][spelerKolom - aanvalBereik]
+    }   if (mouseIsPressed &&
+            mouseX <= (spelerKolom) * 40 &&
+            mouseX >= (spelerKolom - 1) * 40 &&
+            mouseY <= (spelerRij + 1) * 40 &&
+            mouseY >= (spelerRij) * 40) {
+                vakSelectieStatus.splice(3,1,1)
+        }
+
+        if(vakSelectieStatus[3] === 1) {
+            veld[spelerRij].splice(spelerKolom - aanvalBereik,1,4)
+        }
+}
 // tekent de vakjes als deze functie wordt aangeroepen
 var tekenTegel = function(kolom, rij) {
     if (veld[rij][kolom] === 0) {
@@ -143,7 +221,9 @@ var tekenTegel = function(kolom, rij) {
   } else if (veld[rij][kolom] === 2) {
     fill(100, 255, 100);
   } else if (veld[rij][kolom] === 3) {
-      fill(5,50,250);
+    fill(0,0,255);
+  } else if(veld[rij][kolom] === 4) {
+    fill(0,217,255);
   }
   rect(kolom * 40, rij * 40, 40, 40);
 }
@@ -182,24 +262,9 @@ var tekenVeld = function () {
     //teken aanvalknop
     aanvalKnop();
 
-    if(aanvalActie === true) {
-        if( mouseIsPressed &&
-            mouseX >= (spelerKolom) * 40 && 
-            mouseX <= (spelerKolom + 1) * 40 &&
-            mouseY >= (spelerRij + 1) * 40 &&
-            mouseY <= (spelerRij + 2) * 40){
-                selecteerVak = true;
-            }
-        
-        if(keyIsPressed === true && keyCode === ESCAPE) {
-            selecteerVak = false;
-        }
-
-        if(selecteerVak === true) {
-            fill(0, 250, 42);
-            rect(100,100,300,300);
-        }
-    }
+    //selecteert welk vak je wilt aanvallen
+    aanvalVakSelectie();
+    
 };
 
 /**
