@@ -38,7 +38,7 @@ var kleurTegelNulR = 0; // R-waarde tegels met var 0
 var kleurTegelNulG = 0; // G-waarde tegels met var 0
 var kleurTegelNulB = 0; // B-waarde tegels met var 0
 
-var aanvalBereik = 1; // hoeveel tegels om je heen kan je aanvallen
+var aanvalBereik = 2; // hoeveel tegels om je heen kan je aanvallen
 var aanvalActie = false; // ben je aan het aanvallen ja of nee
 var aanvalTekst = "Aanvallen"; // tekst aanvalknop
 
@@ -48,8 +48,6 @@ var kogelY = 0;    // y-positie van kogel
 var vijandKolom = 2;   // x-positie van vijand
 var vijandRij = 5;   // y-positie van vijand
 
-//aanvalvakken selecteerstatus
-
 var score = 0; // aantal behaalde punten
 
 
@@ -57,7 +55,17 @@ var score = 0; // aantal behaalde punten
 var tegelBreedte = 40, tegelHoogte = 40;
 var veldBreedte = 1280 / tegelBreedte - 6, veldHoogte = 720 / tegelHoogte;
 
-var vakSelectieStatus = [0,0,0,0,0,0,0,0]
+//aanvalvakken selecteerstatus
+var vakSelectieStatus = [0,0,0,0,0,0,0,0] // 0 = false, 1 = true -- is het vakje geselecteerd?
+
+// hieruit wordt de standaardschade gehaald als je iets aanvalt
+var standaarSchadeArray = [30,40,50]  // WIP -- schade nu is testschade
+//welke aanval wordt er gedaan en de bijbehorende schade
+var aanval1 = 0;
+var aanval2 = 1;
+var aanval3 = 2;
+// deze variabele wordt aangepast afhankelijk van welke aanval er geselecteerd wordt.
+var welkeAanval = 0;
 
 var veld = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //1
@@ -90,22 +98,22 @@ var veld = [
  */
 
 // functie die berekent hoeveel schade je doet als je aanvalt.
-var hoeveelSchade = function () {
+var hoeveelSchade = function (standaarSchade) {
     // doe je meer of minder schade dan de standaardschade?
     var omhoogOmlaag = Math.floor(Math.random() * 2 + 1);
     console.log(omhoogOmlaag);
 
     // hoeveel minder schade doe je dan?
     var rngOmlaag = function() {
-        schade = 30/* test */ * 1 + random(0,0.25);
+        schade = standaarSchade * 1 + random(0,0.25);
         console.log(schade);
-    };
+    }
 
     // hoeveel meer schade doe je dan?
     var rngOmhoog = function() {
-        schade = 30 /* test */ * 1 - random(0,0.25);
+        schade = standaarSchade * 1 - random(0,0.25);
         console.log(schade);
-    };
+    }
 
     if (omhoogOmlaag = 1) {
         rngOmlaag()
@@ -160,57 +168,130 @@ var aanvalVakSelectie = function() {
             veld[spelerRij].splice(spelerKolom - aanvalBereik,1,3)
         }
 
-        // vak onder speler selecteren
-        if (mouseIsPressed &&
-            mouseX >= (spelerKolom) * 40 && 
-            mouseX <= (spelerKolom + 1) * 40 &&
-            mouseY >= (spelerRij + 1) * 40 &&
-            mouseY <= (spelerRij + 2) * 40){
-                vakSelectieStatus.splice(0,1,1);
+        if(vakSelectieStatus[4] === 0) {
+            veld[spelerRij - aanvalBereik].splice(spelerKolom - aanvalBereik,1,3)
+        }
+
+        if(vakSelectieStatus[5] === 0) {
+                veld[spelerRij - aanvalBereik].splice(spelerKolom + aanvalBereik,1,3)
         }
         
-            if(vakSelectieStatus[0] === 1) {
-            veld[spelerRij + aanvalBereik].splice(spelerKolom,1,4)
+        if(vakSelectieStatus[6] === 0) {
+                veld[spelerRij + aanvalBereik].splice(spelerKolom - aanvalBereik,1,3)
         }
 
-        // vak rechts speler selecteren
-        if (mouseIsPressed &&
-            mouseX <= (spelerKolom + 2) * 40 &&
-            mouseX >= (spelerKolom + 1) * 40 &&
-            mouseY <= (spelerRij + 1) * 40 &&
-            mouseY >= (spelerRij) * 40) {
-                vakSelectieStatus.splice(1,1,1)
-        }
+        if(vakSelectieStatus[7] === 0) {
+                veld[spelerRij + aanvalBereik].splice(spelerKolom + aanvalBereik,1,3)
+            }
         
-        if(vakSelectieStatus[1] === 1) {
-            veld[spelerRij].splice(spelerKolom + aanvalBereik,1,4)
-        }
+        // alleen linkermuisknop detecteren als muis ingedrukt wordt
+        if(mouseIsPressed){
+            // vak onder speler selecteren
+            if (mouseButton === LEFT &&
+                mouseX <= (spelerKolom + 1) * 40 &&
+                mouseX >= (spelerKolom) * 40 &&
+                mouseY <= (spelerRij + 2) * 40 &&
+                mouseY >= (spelerRij + 1) * 40){
+                    vakSelectieStatus.splice(0,1,1);
+            }
+            
+                if(vakSelectieStatus[0] === 1) {
+                veld[spelerRij + aanvalBereik].splice(spelerKolom,1,4)
+            }
 
-        // vak boven speler selecteren
-        if (mouseIsPressed && 
-            mouseX <= (spelerKolom + 1) * 40 &&
-            mouseX >= (spelerKolom) * 40 &&
-            mouseY <= (spelerRij) * 40 &&
-            mouseY >= (spelerRij - 1) * 40 ){
-                vakSelectieStatus.splice(2,1,1)
-        }
+            // vak rechts speler selecteren
+            if (mouseButton === LEFT &&
+                mouseX <= (spelerKolom + 2) * 40 &&
+                mouseX >= (spelerKolom + 1) * 40 &&
+                mouseY <= (spelerRij + 1) * 40 &&
+                mouseY >= (spelerRij) * 40) {
+                    vakSelectieStatus.splice(1,1,1)
+            }
+            
+            if(vakSelectieStatus[1] === 1) {
+                veld[spelerRij].splice(spelerKolom + aanvalBereik,1,4)
+            }
 
-        if(vakSelectieStatus[2] === 1) {
-            veld[spelerRij - aanvalBereik].splice(spelerKolom,1,4)
-        }
-        
-        // vak links speler selecteren veld[spelerRij][spelerKolom - aanvalBereik]
-    }   if (mouseIsPressed &&
-            mouseX <= (spelerKolom) * 40 &&
-            mouseX >= (spelerKolom - 1) * 40 &&
-            mouseY <= (spelerRij + 1) * 40 &&
-            mouseY >= (spelerRij) * 40) {
-                vakSelectieStatus.splice(3,1,1)
-        }
+            // vak boven speler selecteren
+            if (mouseButton === LEFT && 
+                mouseX <= (spelerKolom + 1) * 40 &&
+                mouseX >= (spelerKolom) * 40 &&
+                mouseY <= (spelerRij) * 40 &&
+                mouseY >= (spelerRij - 1) * 40 ){
+                    vakSelectieStatus.splice(2,1,1)
+            }
 
-        if(vakSelectieStatus[3] === 1) {
-            veld[spelerRij].splice(spelerKolom - aanvalBereik,1,4)
+            if(vakSelectieStatus[2] === 1) {
+                veld[spelerRij - aanvalBereik].splice(spelerKolom,1,4)
+            }
+            
+            // vak links speler selecteren
+               if (mouseButton === LEFT &&
+                mouseX <= (spelerKolom) * 40 &&
+                mouseX >= (spelerKolom - 1) * 40 &&
+                mouseY <= (spelerRij + 1) * 40 &&
+                mouseY >= (spelerRij) * 40) {
+                    vakSelectieStatus.splice(3,1,1)
+            }
+
+            if(vakSelectieStatus[3] === 1) {
+                veld[spelerRij].splice(spelerKolom - aanvalBereik,1,4)
+            }
+
+            // vak linksboven speler selecteren veld[spelerRij - aanvalBereik][spelerKolom - aanvalBereik]
+            if (mouseButton === LEFT  &&
+                mouseX <= (spelerKolom) * 40 &&
+                mouseX >= (spelerKolom - 1) * 40 &&
+                mouseY <= (spelerRij) * 40 &&
+                mouseY >= (spelerRij - 1) * 40) {
+                    vakSelectieStatus.splice(4,1,1)
+                }
+
+            if(vakSelectieStatus[4] === 1) {
+                veld[spelerRij - aanvalBereik].splice(spelerKolom - aanvalBereik,1,4)
+            }
+            
+            // vak rechtsboven speler selecteren
+            if (mouseButton === LEFT &&
+                mouseX <= (spelerKolom + 2) * 40 &&
+                mouseX >= (spelerKolom + 1) * 40 &&
+                mouseY <= (spelerRij) * 40 &&
+                mouseY >= (spelerRij - 1) * 40) {
+                    vakSelectieStatus.splice(5,1,1)
+            }
+
+            if(vakSelectieStatus[5] === 1) {
+                veld[spelerRij - aanvalBereik].splice(spelerKolom + aanvalBereik,1,4)
+            }
+
+            // vak linksonder speler selecteren veld[spelerRij + aanvalBereik][spelerKolom - aanvalBereik]
+            if (mouseButton === LEFT &&
+                mouseX <= (spelerKolom) * 40 &&
+                mouseX >= (spelerKolom - 1) * 40 &&
+                mouseY <= (spelerRij + 2) * 40 &&
+                mouseY >= (spelerRij + 1) * 40) {
+                    vakSelectieStatus.splice(6,1,1)
+                }
+            
+            if(vakSelectieStatus[6] === 1) {
+                veld[spelerRij + aanvalBereik].splice(spelerKolom - aanvalBereik,1,4)
+            }
+
+            // vak rechtsonder speler selecteren
+            if (mouseButton === LEFT &&
+                mouseX <= (spelerKolom + 2) * 40 &&
+                mouseX >= (spelerKolom + 1) * 40 &&
+                mouseY <= (spelerRij + 2) * 40 &&
+                mouseY >= (spelerRij + 1) * 40) {
+                    vakSelectieStatus.splice(7,1,1)
+            }
+
+            if(vakSelectieStatus[7] === 1) {
+                veld[spelerRij + aanvalBereik].splice(spelerKolom + aanvalBereik,1,4)
+            }
+            
         }
+    }
 }
 // tekent de vakjes als deze functie wordt aangeroepen
 var tekenTegel = function(kolom, rij) {
@@ -436,25 +517,19 @@ function draw() {
   console.log("start draw");
   switch (spelStatus) {
     case SPELEN:
-      beweegKogel();
-      //hoeveelSchade();
-    
-      if (checkVijandGeraakt()) {
-        // punten erbij
-        // nieuwe vijand maken
-      }
-      
-      if (checkSpelerGeraakt()) {
-        // leven eraf of gezondheid verlagen
-        // eventueel: nieuwe speler maken
-      }
+        beweegKogel();
+      if (mouseIsPressed){
+        if (mouseButton === LEFT) {
+            console.log("LEFT")
+        }
+      }   
 
       
       
 
-      if (checkGameOver()) {
+        if (checkGameOver()) {
         spelStatus = GAMEOVER;
-      }
+        }
         tekenVeld();
         tekenSpeler(spelerKolom, spelerRij);
         tekenVijand(vijandKolom, vijandRij);
@@ -467,7 +542,8 @@ function draw() {
             }
         }
 
-      break;
+    break;
+
     case STARTSCHERM:
       	speelButton();
         uitlegButton();
@@ -477,14 +553,12 @@ function draw() {
 
     break;
 
-
     case GAMEOVER:
 
 
 
 
     break;
-
 
     case UITLEG:
         tekenVeld();
