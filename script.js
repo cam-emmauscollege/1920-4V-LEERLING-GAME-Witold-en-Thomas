@@ -26,10 +26,13 @@ const GAMEOVER = 2;
 const UITLEG = 3
 const xPlayButton = 540;
 const yPlayButton = 100;
+const xUitlegButton = 540;
+const yUitlegButton = 200;
 
 var spelStatus = STARTSCHERM;
 
 var schade = 0;
+
 // kolom is verticale verplaatsing, rij is horizontale verplaatsing
 var spelerKolom = 2; // x-positie van speler
 var spelerRij = 8; // y-positie van speler
@@ -38,7 +41,7 @@ var kleurTegelNulR = 0; // R-waarde tegels met var 0
 var kleurTegelNulG = 0; // G-waarde tegels met var 0
 var kleurTegelNulB = 0; // B-waarde tegels met var 0
 
-var aanvalBereik = 2; // hoeveel tegels om je heen kan je aanvallen
+var aanvalBereik = 1; // hoeveel tegels om je heen kan je aanvallen
 var aanvalActie = false; // ben je aan het aanvallen ja of nee
 var aanvalTekst = "Aanvallen"; // tekst aanvalknop
 
@@ -49,8 +52,6 @@ var vijandKolom = 2;   // x-positie van vijand
 var vijandRij = 5;   // y-positie van vijand
 
 var score = 0; // aantal behaalde punten
-
-
 
 var tegelBreedte = 40, tegelHoogte = 40;
 var veldBreedte = 1280 / tegelBreedte - 6, veldHoogte = 720 / tegelHoogte;
@@ -92,10 +93,37 @@ var veld = [
 /*      functies die je gebruikt in je game      */
 /* ********************************************* */
 
+// tekent de speelknop
+var speelButton = function() {
+    fill(3, 252, 61);
+    rect(xPlayButton,yPlayButton,200, 80);
+    fill(0,0,0);
+    textSize(50);
+    text("Spelen",560,115,730,170);
+    if(mouseIsPressed && mouseX <= xPlayButton + 200 && mouseY <= yPlayButton + 80 && mouseX >= xPlayButton && mouseY >= yPlayButton) {
+        spelStatus = SPELEN;
+    } 
+}
 
-/**
- * Tekent het speelveld
- */
+// tekent de uitlegknop
+var uitlegButton = function () {
+    fill(3, 252, 61);
+    rect(xUitlegButton,yUitlegButton,200,80);
+    fill(0,0,0);
+    textSize(50);
+    text("Uitleg",575,215,730,270);
+    if(mouseIsPressed && mouseX < xUitlegButton + 200 && mouseX > xUitlegButton && mouseY < yUitlegButton + 80 && mouseY > yUitlegButton) {
+        spelStatus = UITLEG;
+    }
+}
+
+//tekent het uitlegscherm
+var uitlegScherm = function () {
+    fill(3, 252, 61);
+    rect(180,100,900,500);
+    fill(0,0,0);
+    text("Hier komt de uitleg",200,150,850,480);
+}
 
 // functie die berekent hoeveel schade je doet als je aanvalt.
 var hoeveelSchade = function (standaarSchade) {
@@ -125,6 +153,26 @@ var hoeveelSchade = function (standaarSchade) {
     
 }
 
+var terugKnop = function(){
+    stroke(0,0,0)
+    fill(255, 255, 255);
+    rect(1040, 520, 240, 100);
+    fill(0, 0, 0);
+    textSize(35);
+    text("Terug", 1110, 580);
+    noStroke();
+
+    if(mouseIsPressed) {
+        if (mouseButton === LEFT &&
+            mouseX <= 1280 &&
+            mouseX >= 1040&&
+            mouseY <= 620 &&
+            mouseY >= 520) {
+                aanvalActie = false;
+        }
+    }
+}
+
 var aanvalKnop = function() {
     // aanvalknop -- als je hierop klikt kan je de vijand aanvallen.
     fill(255, 255, 255);
@@ -141,6 +189,8 @@ var aanvalKnop = function() {
         text(aanvalTekst, 1083, 186);
     }
 }
+
+
 var aanvalVakSelectie = function() {
     if(aanvalActie === true) {
         
@@ -148,41 +198,38 @@ var aanvalVakSelectie = function() {
         if(keyIsPressed === true && keyCode === ESCAPE) {
             vakSelectieStatus.splice(0,8,0,0,0,0,0,0,0,0)
         }
-
-        if(vakSelectieStatus[0]=== 0) {
-            if(veld[spelerRij + aanvalBereik][spelerKolom] === 0 || veld[spelerRij + aanvalBereik][spelerKolom] === 4){
+        
+        if(vakSelectieStatus[0] === 0) {
             veld[spelerRij + aanvalBereik].splice(spelerKolom,1,3)
-            }
         }
 
         if(vakSelectieStatus[1] === 0) {
-            if(veld[spelerRij][spelerKolom + aanvalBereik] === 0 || veld[spelerRij][spelerKolom + aanvalBereik] === 4 )
             veld[spelerRij].splice(spelerKolom + aanvalBereik,1,3)
         }
-
+        
         if(vakSelectieStatus[2] === 0) {
             veld[spelerRij - aanvalBereik].splice(spelerKolom,1,3)
         }
-
+        
         if(vakSelectieStatus[3] === 0) {
             veld[spelerRij].splice(spelerKolom - aanvalBereik,1,3)
         }
-
+        
         if(vakSelectieStatus[4] === 0) {
             veld[spelerRij - aanvalBereik].splice(spelerKolom - aanvalBereik,1,3)
         }
-
+        
         if(vakSelectieStatus[5] === 0) {
-                veld[spelerRij - aanvalBereik].splice(spelerKolom + aanvalBereik,1,3)
+            veld[spelerRij - aanvalBereik].splice(spelerKolom + aanvalBereik,1,3)
         }
         
         if(vakSelectieStatus[6] === 0) {
-                veld[spelerRij + aanvalBereik].splice(spelerKolom - aanvalBereik,1,3)
+            veld[spelerRij + aanvalBereik].splice(spelerKolom - aanvalBereik,1,3)
         }
-
+        
         if(vakSelectieStatus[7] === 0) {
-                veld[spelerRij + aanvalBereik].splice(spelerKolom + aanvalBereik,1,3)
-            }
+            veld[spelerRij + aanvalBereik].splice(spelerKolom + aanvalBereik,1,3)
+        }
         
         // alleen linkermuisknop detecteren als muis ingedrukt wordt
         if(mouseIsPressed){
@@ -293,6 +340,7 @@ var aanvalVakSelectie = function() {
         }
     }
 }
+
 // tekent de vakjes als deze functie wordt aangeroepen
 var tekenTegel = function(kolom, rij) {
     if (veld[rij][kolom] === 0) {
@@ -310,7 +358,7 @@ var tekenTegel = function(kolom, rij) {
 }
 
 var tekenVeld = function () {
-    stroke(255, 211, 0);
+    stroke(255, 0, 115);
     strokeWeight(1);
     rect(20, 20, width - 2 * 20, height - 2 * 20);
     // genereert het aantal vakjes horizontaal(rij) en verticaal(kolom)
@@ -319,6 +367,7 @@ var tekenVeld = function () {
          tekenTegel(kolom, rij); 
         } 
     }
+
     //actiekolom
     noStroke();
     fill(255, 0, 0);
@@ -334,6 +383,7 @@ var tekenVeld = function () {
     //actieknoppen
     text("Acties", 1100, 50);
     line(1040, 60, 1280, 60);
+    
     //bewegen
     fill(255, 255, 255);
     rect(1050, 80, 220, 50);
@@ -345,8 +395,11 @@ var tekenVeld = function () {
 
     //selecteert welk vak je wilt aanvallen
     aanvalVakSelectie();
+
+    //terugknop
+    terugKnop();
     
-};
+}
 
 /**
  * Tekent de kogel of de bal
@@ -362,12 +415,12 @@ var tekenVeld = function () {
 var tekenSpeler = function(spelerKolom, spelerRij) {
   fill(0, 255, 100);
   ellipse(spelerKolom * 40 + 20, spelerRij * 40 + 20, 30, 30);
-};
+}
 
 var tekenVijand = function(vijandKolom, vijandRij) {
   fill(255, 0, 0);
   ellipse(vijandKolom * 40 + 20, vijandRij * 40 + 20, 30, 30);
-};
+}
 
 
 var aanvallen = function() {
@@ -412,12 +465,6 @@ var aanvallen = function() {
 
 
 
-/**
- * Updatet globale variabelen met positie van kogel of bal
- */
-var beweegKogel = function() {
-
-};
 
 
 /**
@@ -431,35 +478,13 @@ var beweegActie = function() {
 };
 
 
-/**
- * Zoekt uit of de vijand is geraakt
- * @returns {boolean} true als vijand is geraakt
- */
-var checkVijandGeraakt = function() {
-
-  return false;
-};
 
 
-/**
- * Zoekt uit of de speler is geraakt
- * bijvoorbeeld door botsing met vijand
- * @returns {boolean} true als speler is geraakt
- */
-var checkSpelerGeraakt = function() {
-    
-  return false;
-};
 
 
-/**
- * Zoekt uit of het spel is afgelopen
- * @returns {boolean} true als het spel is afgelopen
- */
-var checkGameOver = function() {
-    
-  return false;
-};
+
+
+
 
 
 /**
@@ -476,71 +501,27 @@ function setup() {
 }
 
 
-var speelButton = function() {
-    fill(3, 252, 61);
-    rect(xPlayButton,yPlayButton,200, 80);
-    fill(0,0,0);
-    textSize(50);
-    text("Spelen",560,115,730,170);
-    if(mouseIsPressed && mouseX < xPlayButton + 200 && mouseY < yPlayButton + 80 && mouseX > xPlayButton && mouseY > yPlayButton) {
-        spelStatus = SPELEN;
-    } 
-}
 
-var xUitlegButton = 540;
-var yUitlegButton = 200;
-var uitlegButton = function () {
-    fill(3, 252, 61);
-    rect(xUitlegButton,yUitlegButton,200,80);
-    fill(0,0,0);
-    textSize(50);
-    text("Uitleg",575,215,730,270);
-    if(mouseIsPressed && mouseX < xUitlegButton + 200 && mouseX > xUitlegButton && mouseY < yUitlegButton + 80 && mouseY > yUitlegButton) {
-        spelStatus = UITLEG;
-    }
-}
-
- var uitlegScherm = function () {
-    fill(3, 252, 61);
-    rect(180,100,900,500);
-    fill(0,0,0);
-    text("Hier komt de uitleg",200,150,850,480);
-
-
- }
 /**
  * draw
  * de code in deze functie wordt meerdere keren per seconde
  * uitgevoerd door de p5 library, nadat de setup functie klaar is
  */
+
 function draw() {
   console.log("start draw");
   switch (spelStatus) {
     case SPELEN:
-        beweegKogel();
-      if (mouseIsPressed){
-        if (mouseButton === LEFT) {
-            console.log("LEFT")
-        }
-      }   
+   
 
       
       
 
-        if (checkGameOver()) {
-        spelStatus = GAMEOVER;
-        }
+
         tekenVeld();
         tekenSpeler(spelerKolom, spelerRij);
         tekenVijand(vijandKolom, vijandRij);
         aanvallen();
-        
-
-        if(keyIsPressed) {
-            if(key === "m") {
-                beweegActie();
-            }
-        }
 
     break;
 
@@ -561,7 +542,6 @@ function draw() {
     break;
 
     case UITLEG:
-        tekenVeld();
         uitlegScherm();
         
 
