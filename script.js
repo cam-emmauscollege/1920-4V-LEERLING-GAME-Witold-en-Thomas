@@ -44,6 +44,7 @@ var kleurTegelNulB = 0; // B-waarde tegels met var 0
 var aanvalBereik = 1; // hoeveel tegels om je heen kan je aanvallen
 var aanvalActie = false; // ben je aan het aanvallen ja of nee
 var aanvalTekst = "Aanvallen"; // tekst aanvalknop
+var aanvalKnopStatus = false;
 
 var kogelX = 0;    // x-positie van kogel
 var kogelY = 0;    // y-positie van kogel
@@ -154,21 +155,30 @@ var hoeveelSchade = function (standaarSchade) {
 }
 
 var terugKnop = function(){
+    strokeWeight(1)
     stroke(0,0,0)
     fill(255, 255, 255);
     rect(1040, 520, 240, 100);
+    noStroke();
     fill(0, 0, 0);
     textSize(35);
     text("Terug", 1110, 580);
-    noStroke();
-
     if(mouseIsPressed) {
         if (mouseButton === LEFT &&
             mouseX <= 1280 &&
-            mouseX >= 1040&&
+            mouseX >= 1040 &&
             mouseY <= 620 &&
             mouseY >= 520) {
                 aanvalActie = false;
+                markeerVakjesRondSpeler(spelerKolom,spelerRij,3,0);
+                aanvalTekst = "Aanvallen";
+                fill(255, 255, 255);
+                rect(1050, 150, 220, 50);
+                fill(0, 0, 0);
+                text(aanvalTekst, 1083, 186);
+                markeerVakjesRondSpeler(spelerKolom,spelerRij,4,0);
+                vakSelectieStatus.splice(0,8,0,0,0,0,0,0,0,0)
+                aanvalKnopStatus = false;
         }
     }
 }
@@ -180,58 +190,33 @@ var aanvalKnop = function() {
     fill(0, 0, 0);
     text(aanvalTekst, 1083, 186);
 
-    if (mouseIsPressed && mouseY >= 150 && mouseY <= 200 && mouseX >= 1050 && mouseX <= 1270){
-        aanvalActie = true;
-        aanvalTekst = "bezig";
-        fill(255, 255, 255);
-        rect(1050, 150, 220, 50);
-        fill(0, 0, 0);
-        text(aanvalTekst, 1083, 186);
+    if(mouseIsPressed) {
+        if (mouseButton === LEFT && mouseY >= 150 && mouseY <= 200 && mouseX >= 1050 && mouseX <= 1270){
+            aanvalActie = true;
+            aanvalKnopStatus = true;
+        }
     }
+        if(aanvalKnopStatus === true){
+            fill(47, 255, 0);
+            rect(1050, 150, 220, 50);
+            fill(0, 0, 0);
+            text(aanvalTekst, 1083, 186);
+        }
+
+
 }
 
 
 var aanvalVakSelectie = function() {
     if(aanvalActie === true) {
-        
-        // een vak deselecteren
-        if(keyIsPressed === true && keyCode === ESCAPE) {
-            vakSelectieStatus.splice(0,8,0,0,0,0,0,0,0,0)
+        deselecteerVak();
+        selecteerVak();
+            
         }
-        
-        if(vakSelectieStatus[0] === 0) {
-            veld[spelerRij + aanvalBereik].splice(spelerKolom,1,3)
-        }
+    }
 
-        if(vakSelectieStatus[1] === 0) {
-            veld[spelerRij].splice(spelerKolom + aanvalBereik,1,3)
-        }
-        
-        if(vakSelectieStatus[2] === 0) {
-            veld[spelerRij - aanvalBereik].splice(spelerKolom,1,3)
-        }
-        
-        if(vakSelectieStatus[3] === 0) {
-            veld[spelerRij].splice(spelerKolom - aanvalBereik,1,3)
-        }
-        
-        if(vakSelectieStatus[4] === 0) {
-            veld[spelerRij - aanvalBereik].splice(spelerKolom - aanvalBereik,1,3)
-        }
-        
-        if(vakSelectieStatus[5] === 0) {
-            veld[spelerRij - aanvalBereik].splice(spelerKolom + aanvalBereik,1,3)
-        }
-        
-        if(vakSelectieStatus[6] === 0) {
-            veld[spelerRij + aanvalBereik].splice(spelerKolom - aanvalBereik,1,3)
-        }
-        
-        if(vakSelectieStatus[7] === 0) {
-            veld[spelerRij + aanvalBereik].splice(spelerKolom + aanvalBereik,1,3)
-        }
-        
-        // alleen linkermuisknop detecteren als muis ingedrukt wordt
+var selecteerVak = function() {
+    // alleen linkermuisknop detecteren als muis ingedrukt wordt
         if(mouseIsPressed){
             // vak onder speler selecteren
             if (mouseButton === LEFT &&
@@ -336,9 +321,46 @@ var aanvalVakSelectie = function() {
             if(vakSelectieStatus[7] === 1) {
                 veld[spelerRij + aanvalBereik].splice(spelerKolom + aanvalBereik,1,4)
             }
-            
-        }
     }
+}
+
+var deselecteerVak = function () {
+    // een vak deselecteren
+        if(keyIsPressed === true && keyCode === ESCAPE) {
+            vakSelectieStatus.splice(0,8,0,0,0,0,0,0,0,0)
+        }
+        
+        if(vakSelectieStatus[0] === 0) {
+            veld[spelerRij + aanvalBereik].splice(spelerKolom,1,3)
+        }
+
+        if(vakSelectieStatus[1] === 0) {
+            veld[spelerRij].splice(spelerKolom + aanvalBereik,1,3)
+        }
+        
+        if(vakSelectieStatus[2] === 0) {
+            veld[spelerRij - aanvalBereik].splice(spelerKolom,1,3)
+        }
+        
+        if(vakSelectieStatus[3] === 0) {
+            veld[spelerRij].splice(spelerKolom - aanvalBereik,1,3)
+        }
+        
+        if(vakSelectieStatus[4] === 0) {
+            veld[spelerRij - aanvalBereik].splice(spelerKolom - aanvalBereik,1,3)
+        }
+        
+        if(vakSelectieStatus[5] === 0) {
+            veld[spelerRij - aanvalBereik].splice(spelerKolom + aanvalBereik,1,3)
+        }
+        
+        if(vakSelectieStatus[6] === 0) {
+            veld[spelerRij + aanvalBereik].splice(spelerKolom - aanvalBereik,1,3)
+        }
+        
+        if(vakSelectieStatus[7] === 0) {
+            veld[spelerRij + aanvalBereik].splice(spelerKolom + aanvalBereik,1,3)
+        }
 }
 
 // tekent de vakjes als deze functie wordt aangeroepen
@@ -426,43 +448,49 @@ var tekenVijand = function(vijandKolom, vijandRij) {
 var aanvallen = function() {
     // aanvalmogelijkheden -- vakjes die aangevallen kunnen worden veranderen van kleur
     if (aanvalActie === true) {
-        // onder speler
-        if(veld[spelerRij + aanvalBereik][spelerKolom] === 0) {
-            veld[spelerRij + aanvalBereik].splice(spelerKolom,1,3);
-            
-        }
-        // boven speler
-        if(veld[spelerRij - aanvalBereik][spelerKolom] === 0) {
-            veld[spelerRij - aanvalBereik].splice(spelerKolom,1,3);
-        }
-        // links speler
-        if(veld[spelerRij][spelerKolom - aanvalBereik] === 0) {
-            veld[spelerRij].splice(spelerKolom - aanvalBereik,1,3)
-        }
-        // rechts speler
-        if(veld[spelerRij][spelerKolom + aanvalBereik] === 0) {
-            veld[spelerRij].splice(spelerKolom + aanvalBereik,1,3)
-        }
-        // rechtsonder speler
-        if(veld[spelerRij + aanvalBereik][spelerKolom + aanvalBereik] === 0) {
-            veld[spelerRij + aanvalBereik].splice(spelerKolom + aanvalBereik,1,3)
-        }
-        // linksonder speler
-        if(veld[spelerRij + aanvalBereik][spelerKolom - aanvalBereik] === 0) {
-            veld[spelerRij + aanvalBereik].splice(spelerKolom - aanvalBereik,1,3)
-        }
-        // linksboven speler
-        if(veld[spelerRij - aanvalBereik][spelerKolom - aanvalBereik] === 0) {
-            veld[spelerRij - aanvalBereik].splice(spelerKolom - aanvalBereik,1,3)
-        }
-        // rechtsboven speler
-        if(veld[spelerRij - aanvalBereik][spelerKolom + aanvalBereik] === 0){
-            veld[spelerRij - aanvalBereik].splice(spelerKolom + aanvalBereik,1,3)
-        }
+        markeerVakjesRondSpeler(spelerKolom,spelerRij,0,3);
     }    
 }
 
-
+// x = spelerKolom
+// y = spelerRij
+// oudekleur = oude kleur vakje
+// nieuwekleur = nieuwe kleur vakje
+var markeerVakjesRondSpeler = function(x,y,oudekleur,nieuwekleur) {
+    // onder speler
+        if(veld[y + aanvalBereik][x] === oudekleur) {
+            veld[y + aanvalBereik].splice(x,1,nieuwekleur);
+            
+        }
+        // boven speler
+        if(veld[y - aanvalBereik][x] === oudekleur) {
+            veld[y - aanvalBereik].splice(x,1,nieuwekleur);
+        }
+        // links speler
+        if(veld[y][x - aanvalBereik] === oudekleur) {
+            veld[y].splice(x - aanvalBereik,1,nieuwekleur)
+        }
+        // rechts speler
+        if(veld[y][x + aanvalBereik] === oudekleur) {
+            veld[y].splice(x + aanvalBereik,1,nieuwekleur)
+        }
+        // rechtsonder speler
+        if(veld[y + aanvalBereik][x + aanvalBereik] === oudekleur) {
+            veld[y + aanvalBereik].splice(x + aanvalBereik,1,nieuwekleur)
+        }
+        // linksonder speler
+        if(veld[y + aanvalBereik][x - aanvalBereik] === oudekleur) {
+            veld[y + aanvalBereik].splice(x - aanvalBereik,1,nieuwekleur)
+        }
+        // linksboven speler
+        if(veld[y - aanvalBereik][x - aanvalBereik] === oudekleur) {
+            veld[y - aanvalBereik].splice(x - aanvalBereik,1,nieuwekleur)
+        }
+        // rechtsboven speler
+        if(veld[y - aanvalBereik][x + aanvalBereik] === oudekleur){
+            veld[y - aanvalBereik].splice(x + aanvalBereik,1,nieuwekleur)
+        }
+}
 
 
 
