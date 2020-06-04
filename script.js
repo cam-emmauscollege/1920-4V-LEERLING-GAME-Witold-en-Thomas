@@ -26,8 +26,8 @@ const xPlayButton = 540;
 const yPlayButton = 100;
 var spelStatus = STARTSCHERM;
 
-var spelerKolom = 1; // x-positie van speler
-var spelerRij = 1; // y-positie van speler
+var spelerKolom = 8; // x-positie van speler
+var spelerRij = 15; // y-positie van speler
 
 var kogelX = 0;    // x-positie van kogel
 var kogelY = 0;    // y-positie van kogel
@@ -37,6 +37,9 @@ var vijandRij = 10;   // y-positie van vijand
 
 var score = 0; // aantal behaalde punten
 
+var schade = 0; // hoeveel schade doe je als je iemand raakt
+var spelerLevens = 100; // hoeveel levens heeft de speler
+var vijandLevens = 100; // hoeveel levens heeft de vijand
 
 
 var tegelBreedte = 40, tegelHoogte = 40;
@@ -68,23 +71,29 @@ var veld = [
 /* ********************************************* */
 
 
-/**
- * Tekent het speelveld
- */
+var levensVanSpeler = function() {
+    noStroke();
+    textSize(15);
+    fill(15, 3, 252);
+    text(spelerLevens, (spelerKolom * 40) + 7,spelerRij * 40);
+}
 
-var schade = 0;
+var levensVanVijand = function() {
+    noStroke();
+    textSize(15);
+    fill(15, 3, 252);
+    text(vijandLevens, (vijandKolom * 40) + 7,vijandRij * 40);
+}
+
 var hoeveelSchade = function () {
     var omhoogOmlaag = Math.floor(Math.random() * 2 + 1);
-    console.log(omhoogOmlaag);
 
     var rngOmlaag = function() {
         schade = 30/* test */ * 1 + random(0,0.25);
-        console.log(schade);
     };
 
     var rngOmhoog = function() {
         schade = 30 /* test */ * 1 - random(0,0.25);
-        console.log(schade);
     };
 
     if (omhoogOmlaag = 1) {
@@ -118,6 +127,7 @@ var tekenVeld = function () {
          tekenTegel(kolom, rij); 
         } 
     }
+
     //actiekolom
     fill(255, 0, 0);
     rect(1040, 0, 240, 720);
@@ -282,8 +292,6 @@ function draw() {
         // leven eraf of gezondheid verlagen
         // eventueel: nieuwe speler maken
       }
-
-      tekenVeld();
       
 
       if (checkGameOver()) {
@@ -292,7 +300,8 @@ function draw() {
         tekenVeld();
         tekenSpeler(spelerKolom, spelerRij);
         tekenVijand(vijandKolom, vijandRij);
-
+        levensVanSpeler();
+        levensVanVijand();
         if(keyIsPressed) {
             if(key === "m") {
                 beweegActie();
