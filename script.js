@@ -31,6 +31,7 @@ const yUitlegButton = 200;
 
 var spelStatus = STARTSCHERM;
 
+<<<<<<< HEAD
 var schade = 0;
 
 // kolom is verticale verplaatsing, rij is horizontale verplaatsing
@@ -45,6 +46,10 @@ var aanvalBereik = 1; // hoeveel tegels om je heen kan je aanvallen
 var aanvalActie = false; // ben je aan het aanvallen ja of nee
 var aanvalTekst = "Aanvallen"; // tekst aanvalknop
 var aanvalKnopStatus = false;
+=======
+var spelerKolom = 8; // x-positie van speler
+var spelerRij = 15; // y-positie van speler
+>>>>>>> origin/levens-voor-speler-en-vijand
 
 var kogelX = 0;    // x-positie van kogel
 var kogelY = 0;    // y-positie van kogel
@@ -54,6 +59,14 @@ var vijandRij = 5;   // y-positie van vijand
 
 var score = 0; // aantal behaalde punten
 
+<<<<<<< HEAD
+=======
+var schade = 0; // hoeveel schade doe je als je iemand raakt
+var spelerLevens = 100; // hoeveel levens heeft de speler
+var vijandLevens = 100; // hoeveel levens heeft de vijand
+
+
+>>>>>>> origin/levens-voor-speler-en-vijand
 var tegelBreedte = 40, tegelHoogte = 40;
 var veldBreedte = 1280 / tegelBreedte - 6, veldHoogte = 720 / tegelHoogte;
 
@@ -106,6 +119,7 @@ var speelButton = function() {
     } 
 }
 
+<<<<<<< HEAD
 // tekent de uitlegknop
 var uitlegButton = function () {
     fill(3, 252, 61);
@@ -129,20 +143,46 @@ var uitlegScherm = function () {
 // functie die berekent hoeveel schade je doet als je aanvalt.
 var hoeveelSchade = function (standaarSchade) {
     // doe je meer of minder schade dan de standaardschade?
+=======
+var levensVanSpeler = function() {
+    noStroke();
+    textSize(15);
+    fill(15, 3, 252);
+    text(spelerLevens, (spelerKolom * 40) + 7,spelerRij * 40);
+}
+
+var levensVanVijand = function() {
+    noStroke();
+    textSize(15);
+    fill(15, 3, 252);
+    text(vijandLevens, (vijandKolom * 40) + 7,vijandRij * 40);
+}
+
+var hoeveelSchade = function () {
+>>>>>>> origin/levens-voor-speler-en-vijand
     var omhoogOmlaag = Math.floor(Math.random() * 2 + 1);
-    console.log(omhoogOmlaag);
 
     // hoeveel minder schade doe je dan?
     var rngOmlaag = function() {
+<<<<<<< HEAD
         schade = standaarSchade * 1 + random(0,0.25);
         console.log(schade);
     }
+=======
+        schade = 30/* test */ * 1 + random(0,0.25);
+    };
+>>>>>>> origin/levens-voor-speler-en-vijand
 
     // hoeveel meer schade doe je dan?
     var rngOmhoog = function() {
+<<<<<<< HEAD
         schade = standaarSchade * 1 - random(0,0.25);
         console.log(schade);
     }
+=======
+        schade = 30 /* test */ * 1 - random(0,0.25);
+    };
+>>>>>>> origin/levens-voor-speler-en-vijand
 
     if (omhoogOmlaag = 1) {
         rngOmlaag()
@@ -544,14 +584,32 @@ function draw() {
 
       
       
+<<<<<<< HEAD
 
+=======
+      if (checkSpelerGeraakt()) {
+        // leven eraf of gezondheid verlagen
+        // eventueel: nieuwe speler maken
+      }
+      
+>>>>>>> origin/levens-voor-speler-en-vijand
 
         tekenVeld();
         tekenSpeler(spelerKolom, spelerRij);
         tekenVijand(vijandKolom, vijandRij);
+<<<<<<< HEAD
         aanvallen();
 
     break;
+=======
+        levensVanSpeler();
+        levensVanVijand();
+        if(keyIsPressed) {
+            if(key === "m") {
+                beweegActie();
+            }
+        }
+>>>>>>> origin/levens-voor-speler-en-vijand
 
     case STARTSCHERM:
       	speelButton();
