@@ -388,11 +388,15 @@ var veranderKleurRondSpeler = function(oudekleur,nieuwekleur) {
     }
 }
 
+// wordt er op de spacebar gedrukt?
 document.body.onkeyup = function(e){
     if(e.keyCode == 32){
         spacebar = true;
     }
 }
+
+// als er op de spacebar gedrukt wordt en het vak van de vijand is geselecteerd
+// doe dan x schade(schade is voorlopig nog random)
 var schadeDoenTegenVijand = function() {
         if(spacebar === true && veld[vijandRij][vijandKolom] === lichtblauw) {
             aanvalSelectie();
@@ -408,9 +412,11 @@ var schadeDoenTegenVijand = function() {
             text(aanvalTekst, 1083, 186);
             aanvalKnopStatus = false;
             spelerTurn = false;
+            vijandTurn = true;
         }
 }
 
+// detecteert of de vijand in het aanvalbereik zit
 var vijandDetectie = function() {
     for(var k = spelerKolom - aanvalBereik; k < spelerKolom + aanvalBereik + 1; k++){
         for(var r = spelerRij - aanvalBereik; r < spelerRij + aanvalBereik + 1; r++){
@@ -437,8 +443,37 @@ var beweegActie = function() {
     }
 };
 
+// wat moet de vijand doen als hij aan de beurt is
+var turnVijand = function() {
+    besteOptie(); // op deze manier? ff over hebben
+    if(besteOptie() === 1) {
+        beweegVijand();
+    }
+    if(besteOptie() === 2) {
+        vijandAanval();
+    }
+    // meer opties later
+}
 
+// simuleert wat de vijand kan doen en wat de uitkomst daarvan is en beslist
+// op  basis daarvan wat de vijand doet
+var besteOptie = function() {
+    return Math.floor(random(0,2));
+}
 
+// beweegt de vijand
+var beweegVijand = function() {
+    vijandTurn = false;
+    spelerTurn = true;
+    console.log("vijand beweegt")
+}
+
+// vijand kan aanvallen
+var vijandAanval = function() {
+    vijandTurn = false;
+    spelerTurn = true;
+    console.log("vijand valt aan")
+}
 
 
 
@@ -482,6 +517,9 @@ function draw() {
         tekenVijand(vijandKolom, vijandRij);
         if(spelerTurn === true) {
         aanvallen();
+        }
+        if(vijandTurn === true) {
+            turnVijand();
         }
         levensVanSpeler();
         levensVanVijand();
