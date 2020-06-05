@@ -389,16 +389,19 @@ var veranderKleurRondSpeler = function(oudekleur,nieuwekleur) {
 }
 
 // wordt er op de spacebar gedrukt?
-document.body.onkeyup = function(e){
-    if(e.keyCode == 32){
-        spacebar = true;
-    }
-}
+
 
 // als er op de spacebar gedrukt wordt en het vak van de vijand is geselecteerd
 // doe dan x schade(schade is voorlopig nog random)
 var schadeDoenTegenVijand = function() {
-        if(spacebar === true && veld[vijandRij][vijandKolom] === lichtblauw) {
+    if(veld[vijandRij][vijandKolom] === lichtblauw){
+        document.body.onkeyup = function(e){
+        if(e.keyCode == 32){
+            spacebar = true;
+        }
+}
+    }
+        if(spacebar === true) {
             aanvalSelectie();
             hoeveelSchade(standaarSchadeArray[welkeAanval]);
             vijandLevens = vijandLevens - schade;
