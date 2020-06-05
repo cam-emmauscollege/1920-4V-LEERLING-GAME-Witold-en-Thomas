@@ -124,6 +124,7 @@ var speelButton = function() {
     fill(0,0,0);
     textSize(50);
     text("Spelen",560,115,730,170);
+
     if(mouseIsPressed && mouseX <= xPlayButton + 200 && mouseY <= yPlayButton + 80 && mouseX >= xPlayButton && mouseY >= yPlayButton) {
         spelStatus = SPELEN;
     } 
@@ -136,6 +137,7 @@ var uitlegButton = function () {
     fill(0,0,0);
     textSize(50);
     text("Uitleg",575,215,730,270);
+
     if(mouseIsPressed && mouseX < xUitlegButton + 200 && mouseX > xUitlegButton && mouseY < yUitlegButton + 80 && mouseY > yUitlegButton) {
         spelStatus = UITLEG;
     }
@@ -158,16 +160,12 @@ var levensVanSpeler = function() {
 }
 
 var levensVanVijand = function() {
-    
     textSize(15);
     fill(41, 120, 51);
     text(vijandLevens, (vijandKolom * 40) + 7,vijandRij * 40);
 }
 
 // functie die berekent hoeveel schade je doet als je aanvalt.
-
-    // doe je meer of minder schade dan de standaardschade?
-
 var hoeveelSchade = function (standaardSchade) {
     var omhoogOmlaag = Math.floor(Math.random(standaardSchade) * 2 + 1);
 
@@ -234,14 +232,13 @@ var aanvalKnop = function() {
             aanvalKnopStatus = true;
         }
     }
-        if(aanvalKnopStatus === true){
+
+    if(aanvalKnopStatus === true){
             fill(47, 255, 0);
             rect(1050, 150, 220, 50);
             fill(0, 0, 0);
             text(aanvalTekst, 1083, 186);
-        }
-
-
+    }
 }
 
 
@@ -299,6 +296,7 @@ var tekenVeld = function () {
     stroke(255, 0, 115);
     strokeWeight(1);
     rect(20, 20, width - 2 * 20, height - 2 * 20);
+
     // genereert het aantal vakjes horizontaal(rij) en verticaal(kolom)
     for (var kolom = 0; kolom < veldBreedte; kolom += 1) {
         for (var rij = 0; rij < veldHoogte; rij += 1) {
@@ -331,30 +329,17 @@ var tekenVeld = function () {
     //teken aanvalknop
     aanvalKnop();
 
-    //selecteert welk vak je wilt aanvallen
-    aanvalVakSelectie();
-
     //terugknop
     terugKnop();
-    
 }
 
-/**
- * Tekent de kogel of de bal
- * @param {number} x x-coördinaat
- * @param {number} y y-coördinaat
- */
-
-/**
- * Tekent de speler
- * @param {number} x x-coördinaat
- * @param {number} y y-coördinaat
- */
+// tekent de speler
 var tekenSpeler = function(spelerKolom, spelerRij) {
   fill(0, 255, 100);
   ellipse(spelerKolom * 40 + 20, spelerRij * 40 + 20, 30, 30);
 }
 
+// tekent de vijand
 var tekenVijand = function(vijandKolom, vijandRij) {
   fill(255, 0, 0);
   ellipse(vijandKolom * 40 + 20, vijandRij * 40 + 20, 30, 30);
@@ -365,14 +350,27 @@ var aanvallen = function() {
     // aanvalmogelijkheden -- vakjes die aangevallen kunnen worden veranderen van kleur
     if (aanvalActie === true) {
         veranderKleurRondSpeler(wit,donkerblauw);
-        aanvalSelectie();
-        schadeDoenTegenVijand();
         vijandDetectie();
+        aanvalVakSelectie();
+
+        if(veld[vijandRij][vijandKolom] === lichtblauw){
+            document.body.onkeyup = function(e){
+                if(e.keyCode == 32){
+                    spacebar = true;
+                }
+            }
+        }
+
+        if(spacebar === true){
+        schadeDoenTegenVijand();
+        }
+
         if(aanvalKlaar === true) {
             veranderKleurRondSpeler(donkerblauw,wit);
             veranderKleurRondSpeler(lichtblauw,wit);
-        }
-        
+            aanvalActie = false;
+            aanvalKlaar = false;
+        } 
     }    
 }
 
@@ -388,35 +386,31 @@ var veranderKleurRondSpeler = function(oudekleur,nieuwekleur) {
     }
 }
 
+
+var gameOver = function() {
+    if(vijandLevens <=  0) {
+        spelStatus = GAMEOVER;
+    }
+}
 // wordt er op de spacebar gedrukt?
 
 
 // als er op de spacebar gedrukt wordt en het vak van de vijand is geselecteerd
 // doe dan x schade(schade is voorlopig nog random)
-var schadeDoenTegenVijand = function() {
-    if(veld[vijandRij][vijandKolom] === lichtblauw){
-        document.body.onkeyup = function(e){
-        if(e.keyCode == 32){
-            spacebar = true;
-        }
-}
-    }
-        if(spacebar === true) {
-            aanvalSelectie();
-            hoeveelSchade(standaarSchadeArray[welkeAanval]);
-            vijandLevens = vijandLevens - schade;
-            levensVanVijand();
-            aanvalKlaar = true;
-            console.log("schade gedaan");
-            spacebar = false;
-             fill(255, 255, 255);
-            rect(1050, 150, 220, 50);
-            fill(0, 0, 0);
-            text(aanvalTekst, 1083, 186);
-            aanvalKnopStatus = false;
-            spelerTurn = false;
-            vijandTurn = true;
-        }
+var schadeDoenTegenVijand = function() {    
+    aanvalSelectie();
+    hoeveelSchade(standaarSchadeArray[welkeAanval]);
+    vijandLevens = vijandLevens - schade;
+    levensVanVijand();
+    aanvalKlaar = true;
+    spacebar = false;
+    fill(255, 255, 255);
+    rect(1050, 150, 220, 50);
+    fill(0, 0, 0);
+    text(aanvalTekst, 1083, 186);
+    aanvalKnopStatus = false;
+    spelerTurn = false;
+    vijandTurn = true;    
 }
 
 // detecteert of de vijand in het aanvalbereik zit
@@ -444,7 +438,7 @@ var beweegActie = function() {
     if(mouseX >= kolom * tegelBreedte && mouseX <= kolom * tegelBreedte + tegelBreedte && mouseY >= rij * tegelHoogte && mouseY <= rij * tegelHoogte + tegelHoogte ) {
         veld[rij][kolom] === 2
     }
-};
+}
 
 // wat moet de vijand doen als hij aan de beurt is
 var turnVijand = function() {
@@ -461,7 +455,7 @@ var turnVijand = function() {
 // simuleert wat de vijand kan doen en wat de uitkomst daarvan is en beslist
 // op  basis daarvan wat de vijand doet
 var besteOptie = function() {
-    return Math.floor(random(0,2));
+    return Math.floor(random(0,3));
 }
 
 // beweegt de vijand
@@ -478,7 +472,26 @@ var vijandAanval = function() {
     console.log("vijand valt aan")
 }
 
+var opnieuwSpelen = function() {
 
+}
+var gameOverScherm = function() {
+    createCanvas(1280, 720);
+    background("blue")
+    fill(3, 252, 61);
+    rect(400,100,500, 100);
+    fill(0,0,0);
+    textSize(50);
+    text("Opnieuw Spelen",470,125,730,170);
+    vijandLevens = 100;
+    spelerLevens = 100;
+    spelerTurn = true;
+    vijandTurn = false;
+
+    if(mouseIsPressed && mouseX <= 900 && mouseY <= 200 && mouseX >= 400 && mouseY >= 100) {
+        spelStatus = SPELEN;
+    }
+}
 
 
 
@@ -510,27 +523,28 @@ function draw() {
   console.log("start draw");
   switch (spelStatus) {
     case SPELEN:
-   
-
-      
-      
-
         tekenVeld();
         tekenSpeler(spelerKolom, spelerRij);
         tekenVijand(vijandKolom, vijandRij);
+
         if(spelerTurn === true) {
-        aanvallen();
+            aanvallen();
         }
+
         if(vijandTurn === true) {
             turnVijand();
         }
+
         levensVanSpeler();
         levensVanVijand();
+
         if(keyIsPressed) {
             if(key === "m") {
                 beweegActie();
             }
         }
+
+        gameOver();
     break;
 
 
@@ -544,6 +558,7 @@ function draw() {
     break;
 
     case GAMEOVER:
+        gameOverScherm();
 
 
 
