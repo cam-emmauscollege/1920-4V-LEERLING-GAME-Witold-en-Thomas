@@ -36,6 +36,8 @@ const oranje = 2;
 const donkerblauw = 3;
 const lichtblauw = 4;
 
+var spelerTurn = true;
+var vijandTurn = false;
 var spelStatus = STARTSCHERM;
 
 var schade = 0;
@@ -50,9 +52,12 @@ var aanvalBereik = 1; // hoeveel tegels om je heen kan je aanvallen
 var aanvalActie = false; // ben je aan het aanvallen ja of nee
 var aanvalTekst = "Aanvallen"; // tekst aanvalknop
 var aanvalKnopStatus = false;
+var aanvalKlaar = false;
+var spacebar = false;
+var vijandBinnenBereik = false;
 
 var spelerKolom = 8; // x-positie van speler
-var spelerRij = 9; // y-positie van speler
+var spelerRij = 14; // y-positie van speler
 
 var kogelX = 0;    // x-positie van kogel
 var kogelY = 0;    // y-positie van kogel
@@ -163,7 +168,7 @@ var levensVanVijand = function() {
 
     // doe je meer of minder schade dan de standaardschade?
 
-var hoeveelSchade = function () {
+var hoeveelSchade = function (standaardSchade) {
     var omhoogOmlaag = Math.floor(Math.random(standaardSchade) * 2 + 1);
 
     // hoeveel minder schade doe je dan?
@@ -183,6 +188,8 @@ var hoeveelSchade = function () {
     if (omhoogOmlaag === 2) {
         rngOmhoog()
     }
+
+    schade = round(schade);
     
 }
 
@@ -358,7 +365,14 @@ var aanvallen = function() {
     // aanvalmogelijkheden -- vakjes die aangevallen kunnen worden veranderen van kleur
     if (aanvalActie === true) {
         veranderKleurRondSpeler(wit,donkerblauw);
-       // schadeDoen();
+        aanvalSelectie();
+        schadeDoenTegenVijand();
+        vijandDetectie();
+        if(aanvalKlaar === true) {
+            veranderKleurRondSpeler(donkerblauw,wit);
+            veranderKleurRondSpeler(lichtblauw,wit);
+        }
+        
     }    
 }
 
@@ -374,12 +388,35 @@ var veranderKleurRondSpeler = function(oudekleur,nieuwekleur) {
     }
 }
 
-var schadeDoen = function() {
-    for(var i = 0; i < vakSelectieStatus.length;i++){
-        if(vakSelectieStatus[i] === 1){
-            if(keyIsPressed && keyCode === SPACE)
+document.body.onkeyup = function(e){
+    if(e.keyCode == 32){
+        spacebar = true;
+    }
+}
+var schadeDoenTegenVijand = function() {
+        if(spacebar === true && veld[vijandRij][vijandKolom] === lichtblauw) {
             aanvalSelectie();
+            hoeveelSchade(standaarSchadeArray[welkeAanval]);
+            vijandLevens = vijandLevens - schade;
+            levensVanVijand();
+            aanvalKlaar = true;
+            console.log("schade gedaan");
+            spacebar = false;
+             fill(255, 255, 255);
+            rect(1050, 150, 220, 50);
+            fill(0, 0, 0);
+            text(aanvalTekst, 1083, 186);
+            aanvalKnopStatus = false;
+            spelerTurn = false;
+        }
+}
 
+var vijandDetectie = function() {
+    for(var k = spelerKolom - aanvalBereik; k < spelerKolom + aanvalBereik + 1; k++){
+        for(var r = spelerRij - aanvalBereik; r < spelerRij + aanvalBereik + 1; r++){
+		    if(vijandRij === r && vijandKolom === k) {
+                vijandBinnenBereik = true;
+            }
         }
     }
 }
@@ -443,7 +480,9 @@ function draw() {
         tekenVeld();
         tekenSpeler(spelerKolom, spelerRij);
         tekenVijand(vijandKolom, vijandRij);
+        if(spelerTurn === true) {
         aanvallen();
+        }
         levensVanSpeler();
         levensVanVijand();
         if(keyIsPressed) {
