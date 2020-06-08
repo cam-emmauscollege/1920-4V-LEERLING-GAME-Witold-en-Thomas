@@ -263,6 +263,7 @@ var selecteerVak = function() {
                 !(mouseRij == spelerRij &&
                 mouseKolom == spelerKolom) && veld[mouseRij][mouseKolom] !== zwart){
                     if(mouseButton === LEFT){
+                        veranderKleurRondSpeler(lichtblauw,donkerblauw);
                         veld[mouseRij].splice(mouseKolom,1,lichtblauw)
                     }
             }            
