@@ -111,7 +111,7 @@ var veld = [
 /* ********************************************* */
 
 var mouseKolom = function() {
-    return Math.floor(mouseX /40);
+    return Math.floor(mouseX / 40);
 }
 
 var mouseRij = function() {
