@@ -56,6 +56,11 @@ var aanvalKlaar = false;
 var spacebar = false;
 var vijandBinnenBereik = false;
 
+var beweegActie = false;
+var beweegTekst = "Bewegen";
+var beweegKnopStatus = false;
+var bewegingKlaar = false;
+
 var spelerKolom = 10; // x-positie van speler
 var spelerRij = 17; // y-positie van speler
 
@@ -192,6 +197,37 @@ var hoeveelSchade = function (standaardSchade) {
     
 }
 
+var beweegKnop = function() {
+    fill(255, 255, 255);
+    rect(1050, 80, 220, 50);
+    fill(0, 0, 0);
+    text(beweegTekst, 1085, 117);
+
+    if(mouseIsPressed) {
+        if (mouseButton === LEFT && mouseY >= 80 && mouseY <= 130 && mouseX >= 1050 && mouseX <= 1270){
+            beweegActie = true;
+            beweegKnopStatus = true;
+            aanvalActie = false;
+            aanvalKnopStatus = false;
+        }
+    }
+    if(keyIsPressed) {
+        if(key === "m") {
+            beweegActie = true;
+            beweegKnopStatus = true;
+            aanvalActie = false;
+            aanvalKnopStatus = false;
+        }
+    }
+
+    if(beweegKnopStatus === true){
+            fill(47, 255, 0);
+            rect(1050, 80, 220, 50);
+            fill(0, 0, 0);
+            text(beweegTekst, 1085, 117);
+    }
+}
+
 var terugKnop = function(){
     strokeWeight(1)
     stroke(0,0,0)
@@ -231,6 +267,16 @@ var aanvalKnop = function() {
         if (mouseButton === LEFT && mouseY >= 150 && mouseY <= 200 && mouseX >= 1050 && mouseX <= 1270){
             aanvalActie = true;
             aanvalKnopStatus = true;
+            beweegActie = false;
+            beweegKnopStatus = false;
+        }
+    }
+    if(keyIsPressed) {
+        if(key === "n") {
+            aanvalActie = true;
+            aanvalKnopStatus = true;
+            beweegActie = false;
+            beweegKnopStatus = false;
         }
     }
 
@@ -284,7 +330,7 @@ var tekenTegel = function(kolom, rij) {
   } else if (veld[rij][kolom] === zwart) {
     fill(kleurTegelNulR, kleurTegelNulG, kleurTegelNulB);
   } else if (veld[rij][kolom] === oranje) {
-    fill(100, 255, 100);
+    fill(255, 102, 0);
   } else if (veld[rij][kolom] === donkerblauw) {
     fill(0,0,255);
   } else if(veld[rij][kolom] === lichtblauw) {
@@ -322,10 +368,7 @@ var tekenVeld = function () {
     line(1040, 60, 1280, 60);
     
     //bewegen
-    fill(255, 255, 255);
-    rect(1050, 80, 220, 50);
-    fill(0, 0, 0);
-    text("Bewegen", 1085, 117);
+    beweegKnop();
 
     //teken aanvalknop
     aanvalKnop();
@@ -436,12 +479,7 @@ var aanvalSelectie = function(){
  * Updatet globale variabele spelerX en spelerY
  */
 var bewegen = function() {
-    if (mouseIsPressed === true) {
-        if(veld[mouseRij][mouseKolom] !== zwart) {
-            spelerRij = mouseRij;
-            spelerKolom = mouseKolom;
-        }
-    }
+    veranderKleurRondSpeler(wit, oranje);
 }
 
 // wat moet de vijand doen als hij aan de beurt is
@@ -542,11 +580,7 @@ function draw() {
         levensVanSpeler();
         levensVanVijand();
 
-        if(keyIsPressed) {
-            if(key === "m") {
-                bewegen();
-            }
-        }
+    
 
         gameOver();
     break;
