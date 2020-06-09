@@ -35,6 +35,7 @@ const zwart = 1;
 const oranje = 2;
 const donkerblauw = 3;
 const lichtblauw = 4;
+const lichtgroen = 5;
 
 var spelerTurn = true;
 var vijandTurn = false;
@@ -299,6 +300,14 @@ var aanvalVakSelectie = function() {
         }
     }
 
+var beweegVakSelectie = function() {
+    if(beweegActie === true) {
+        deselecteerVak();
+        selecteerVak();
+            
+        }
+    }
+
 var selecteerVak = function() {
     // alleen linkermuisknop detecteren als muis ingedrukt wordt
         if (mouseIsPressed) {
@@ -484,8 +493,21 @@ var aanvalSelectie = function(){
  */
 var bewegen = function() {
     if(beweegActie === true) {
-        veranderKleurRondSpeler(wit, lichtgroen);
-        
+        veranderKleurRondSpeler(wit, lichtblauw);
+        beweegVakSelectie();
+        if(veld[rij][kolom] === 4) {
+            if(mouseIsPressed) {
+                if(mouseButton === LEFT) {
+                    spelerKolom = mouseKolom;
+                    spelerRij = mouseRij;
+                }
+            } else if(keyIsPressed) {
+                if(e.keycode == 27) {
+                    beweegActie = false;
+                    beweegKnopStatus = false;
+                }
+            }
+        }
     }
 }
 
