@@ -60,6 +60,8 @@ var beweegActie = false;
 var beweegTekst = "Bewegen";
 var beweegKnopStatus = false;
 var bewegingKlaar = false;
+var beweegpuntenSpeler = 5; //hoever je kan lopen per beurt
+var beweegpuntenSpeler = 5;
 
 var spelerKolom = 10; // x-positie van speler
 var spelerRij = 17; // y-positie van speler
@@ -335,6 +337,8 @@ var tekenTegel = function(kolom, rij) {
     fill(0,0,255);
   } else if(veld[rij][kolom] === lichtblauw) {
     fill(0,217,255);
+  } else if(veld[rij][kolom] === lichtgroen) {
+    fill(152, 251, 152);
   }
   rect(kolom * 40, rij * 40, 40, 40);
 }
@@ -479,7 +483,10 @@ var aanvalSelectie = function(){
  * Updatet globale variabele spelerX en spelerY
  */
 var bewegen = function() {
-    veranderKleurRondSpeler(wit, oranje);
+    if(beweegActie === true) {
+        veranderKleurRondSpeler(wit, lichtgroen);
+        
+    }
 }
 
 // wat moet de vijand doen als hij aan de beurt is
