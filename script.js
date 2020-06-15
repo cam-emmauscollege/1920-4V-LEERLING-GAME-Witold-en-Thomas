@@ -61,8 +61,7 @@ var beweegActie = false;
 var beweegTekst = "Bewegen";
 var beweegKnopStatus = false;
 var bewegingKlaar = false;
-var beweegpuntenSpeler = 5; //hoever je kan lopen per beurt
-var beweegpuntenSpeler = 5;
+var beweegpuntenSpeler = 0; //hoever je kan lopen per beurt
 
 var spelerKolom = 10; // x-positie van speler
 var spelerRij = 17; // y-positie van speler
@@ -215,7 +214,7 @@ var beweegKnop = function() {
     text(beweegTekst, 1085, 117);
 
     if(mouseIsPressed) {
-        if (mouseButton === LEFT && mouseY >= 80 && mouseY <= 130 && mouseX >= 1050 && mouseX <= 1270){
+        if (mouseButton === LEFT && mouseY >= 80 && mouseY <= 130 && mouseX >= 1050 && mouseX <= 1270 && beweegpuntenSpeler > 0){
             beweegActie = true;
             beweegKnopStatus = true;
             aanvalActie = false;
@@ -223,7 +222,7 @@ var beweegKnop = function() {
         }
     }
     if(keyIsPressed) {
-        if(key === "m") {
+        if(key === "m" && beweegpuntenSpeler > 0) {
             beweegActie = true;
             beweegKnopStatus = true;
             aanvalActie = false;
