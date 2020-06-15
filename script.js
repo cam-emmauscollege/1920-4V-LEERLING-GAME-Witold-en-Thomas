@@ -13,7 +13,7 @@
    voeg er je eigen code aan toe.
  */
 
-
+const gamelogging = true;
 
 
 /* ********************************************* */
@@ -61,7 +61,7 @@ var beweegActie = false;
 var beweegTekst = "Bewegen";
 var beweegKnopStatus = false;
 var bewegingKlaar = false;
-var beweegpuntenSpeler = 0; //hoever je kan lopen per beurt
+var beweegpuntenSpeler = 5; //hoever je kan lopen per beurt
 
 var spelerKolom = 10; // x-positie van speler
 var spelerRij = 17; // y-positie van speler
@@ -113,6 +113,42 @@ var veld = [
 ]; // dit is het veld (A site Inferno)
 
 
+
+// hieruit wordt de standaardschade gehaald als je iets aanvalt
+var standaarSchadeArray = [30,40,50]  // WIP -- schade nu is testschade
+//welke aanval wordt er gedaan en de bijbehorende schade
+// deze variabele wordt aangepast afhankelijk van welke aanval er geselecteerd wordt.
+var welkeAanval = 0;
+
+var veld = [
+        [1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1], //1
+        [1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1], //2
+        [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //3
+        [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //4
+        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1], //5
+        [1, 1, 1, 1, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1], //6
+        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 2, 2, 2, 1, 2, 2, 2, 0, 0, 1, 0, 0, 1, 1, 1, 1], //7
+        [1, 1, 0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 2, 2, 2, 2, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1], //8
+        [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1], //9
+        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1], //10
+        [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1], //11
+        [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1], //12
+        [1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1], //13
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //14        
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1], //15
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1], //16
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1], //17
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] //18
+]; // dit is het veld (A site Inferno)
+
+var max_kolom = veld[0].length;
+var max_rij = veld.length;
+
+var gamelog = function(text) {
+    if (gamelogging) {
+        console.log(text)
+    }
+}
 /* ********************************************* */
 /*      functies die je gebruikt in je game      */
 /* ********************************************* */
@@ -318,17 +354,18 @@ var beweegVakSelectie = function() {
 var selecteerVak = function() {
     // alleen linkermuisknop detecteren als muis ingedrukt wordt
         if (mouseIsPressed) {
-            var mouseKolom = mouseKolom();
-            var mouseRij = mouseRij();
+            var mKolom = mouseKolom();
+            var mRij = mouseRij();
          
-            if (mouseKolom >= spelerKolom - aanvalBereik &&
-                mouseKolom <= spelerKolom + aanvalBereik && 
-                mouseRij >= spelerRij - aanvalBereik && 
-                mouseRij <= spelerRij + aanvalBereik &&
-                !(mouseRij == spelerRij &&
-                mouseKolom == spelerKolom) && veld[mouseRij][mouseKolom] !== zwart){
+            if (mKolom >= spelerKolom - aanvalBereik &&
+                mKolom <= spelerKolom + aanvalBereik && 
+                mRij >= spelerRij - aanvalBereik && 
+                mRij <= spelerRij + aanvalBereik &&
+                !(mRij == spelerRij &&
+                mKolom == spelerKolom) && veld[mRij][mKolom] !== zwart){
                     if(mouseButton === LEFT){
-                        veld[mouseRij].splice(mouseKolom,1,lichtblauw)
+                        veranderKleurRondSpeler(lichtblauw,donkerblauw);
+                        veld[mRij].splice(mKolom,1,lichtblauw)
                     }
             }            
         }
@@ -389,7 +426,7 @@ var tekenVeld = function() {
     
     //bewegen
     beweegKnop();
-
+ 
     //teken aanvalknop
     aanvalKnop();
 
@@ -443,7 +480,7 @@ var aanvallen = function() {
 var veranderKleurRondSpeler = function(oudekleur,nieuwekleur) {
     for(var k = spelerKolom - aanvalBereik; k < spelerKolom + aanvalBereik + 1; k++){
         for(var r = spelerRij - aanvalBereik; r < spelerRij + aanvalBereik + 1; r++){
-		    if(!(k === spelerKolom && r === spelerRij) && veld[r][k] === oudekleur) {
+		    if(!(k === spelerKolom && r === spelerRij) && !(k < 0 || k > max_kolom -1) && !(r < 0 || r > max_rij - 1) && veld[r][k] === oudekleur) {
 				veld[r].splice(k,1,nieuwekleur)
 			}
         }
@@ -498,17 +535,28 @@ var aanvalSelectie = function(){
  * Kijkt wat de toetsen/muis etc zijn.
  * Updatet globale variabele spelerX en spelerY
  */
-var bewegen = function(kolom, rij) {
-    if(beweegActie === true && mouseBuitenVeld === false) {
-        veranderKleurRondSpeler(wit, lichtblauw);
+var bewegen = function() {
+    if(beweegActie === true) {
+        veranderKleurRondSpeler(wit, donkerblauw);
         beweegVakSelectie();
-        if(veld[rij][kolom] === lichtblauw) {
-            if(mouseIsPressed) {
-                if(mouseButton === LEFT) {
-                    spelerKolom = mouseKolom();
-                    spelerRij = mouseRij();
+        for(var r = spelerRij - aanvalBereik; r < spelerRij + aanvalBereik + 1; r++){
+            for(var k = spelerKolom - aanvalBereik; k < spelerKolom + aanvalBereik + 1; k++){
+                if(!(k === spelerKolom && r === spelerRij) && !(k < 0 || k > max_kolom -1) && !(r < 0 || r > max_rij - 1)) {
+                    if(veld[r][k] === lichtblauw) {
+                        if(mouseIsPressed) {
+                            if(mouseButton === LEFT) {
+                                spelerKolom = mouseKolom;
+                                spelerRij = mouseRij;
+                            }
+                        } else if(keyIsPressed) {
+                            if(e.keycode == 27) {
+                                beweegActie = false;
+                                beweegKnopStatus = false;
+                            }
+                        }
+                    }
                 }
-            } 
+            }
         }
     }
 }
@@ -602,6 +650,7 @@ function draw() {
 
         if(spelerTurn === true) {
             aanvallen();
+            bewegen();
         }
 
         if(vijandTurn === true) {
