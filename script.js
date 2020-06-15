@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-// VERSIE 0.3
+// VERSIE 0.4
 
 /// <reference path=".gitpod/p5.global-mode.d.ts" />
 "use strict";
@@ -44,10 +44,12 @@ var schade = 0;
 
 // kolom is verticale verplaatsing, rij is horizontale verplaatsing
 
-var kleurTegelNulR = 0; // R-waarde tegels met var 0
-var kleurTegelNulG = 0; // G-waarde tegels met var 0
-var kleurTegelNulB = 0; // B-waarde tegels met var 0
+var welkeSpelerKolom = 0; // relatief aan welke speler wordt een functie gebruikt
+var welkeSpelerRij = 0; // relatief aan welke speler wordt een functie gebruikt
+var welkeVijandKolom = 0; // relatief aan welke vijand wordt een functie gebruikt
+var welkeVijandRij = 0; // relatief aan welke vijand wordt een functie gebruikt
 
+var aanDeBeurt = "iemand";
 var aanvalBereik = 1; // hoeveel tegels om je heen kan je aanvallen
 var aanvalActie = false; // ben je aan het aanvallen ja of nee
 var aanvalTekst = "Aanvallen"; // tekst aanvalknop
@@ -69,7 +71,7 @@ var score = 0; // aantal behaalde punten
 
 var schade = 0; // hoeveel schade doe je als je iemand raakt
 var spelerLevens = 100; // hoeveel levens heeft de speler
-var vijandLevens = 100; // hoeveel levens heeft de vijand
+var vijandLevens = 500; // hoeveel levens heeft de vijand
 
 
 var tegelBreedte = 40, tegelHoogte = 40;
@@ -151,6 +153,7 @@ var uitlegScherm = function () {
     text("Hier komt de uitleg",200,150,850,480);
 }
 
+// laat zien hoeveel levens speler 1/vijand nog heeft
 var levensVanSpeler = function() {
     stroke(41, 120, 51);
     strokeWeight(1);
@@ -159,6 +162,7 @@ var levensVanSpeler = function() {
     text(spelerLevens, (spelerKolom * 40) + 7,spelerRij * 40);
 }
 
+// laat zien hoeveel leven speler 2/vijand nog heeft
 var levensVanVijand = function() {
     textSize(15);
     fill(41, 120, 51);
@@ -191,6 +195,16 @@ var hoeveelSchade = function (standaardSchade) {
     
 }
 
+//laat zien wie er aan de beurt is
+var wieIsAanDeBeurt = function() {
+    textSize(22);
+    stroke(0,0,0);
+    strokeWeight(2);
+    fill(0,0,0);
+    text(aanDeBeurt + " is aan de beurt",1040,480,240,100);
+}
+
+// tekent de terugknop
 var terugKnop = function(){
     strokeWeight(1)
     stroke(0,0,0)
@@ -207,13 +221,13 @@ var terugKnop = function(){
             mouseY <= 620 &&
             mouseY >= 520) {
                 aanvalActie = false;
-                veranderKleurRondSpeler(donkerblauw,wit);
+                veranderKleurRondSpeler(donkerblauw,wit,welkeSpelerKolom,welkeSpelerRij);
                 aanvalTekst = "Aanvallen";
                 fill(255, 255, 255);
                 rect(1050, 150, 220, 50);
                 fill(0, 0, 0);
                 text(aanvalTekst, 1083, 186);
-                veranderKleurRondSpeler(lichtblauw,wit);
+                veranderKleurRondSpeler(lichtblauw,wit,welkeSpelerKolom,welkeSpelerRij);
                 aanvalKnopStatus = false;
         }
     }
@@ -245,25 +259,25 @@ var aanvalKnop = function() {
 var aanvalVakSelectie = function() {
     if(aanvalActie === true) {
         deselecteerVak();
-        selecteerVak();
+        selecteerVak(welkeSpelerKolom,welkeSpelerRij);
             
         }
     }
 
-var selecteerVak = function() {
+var selecteerVak = function(wieIsSpelerKolom,wieIsSpelerRij) {
     // alleen linkermuisknop detecteren als muis ingedrukt wordt
         if (mouseIsPressed) {
             var mouseKolom = aanvalMouseKolom();
             var mouseRij = aanvalMouseRij();
          
-            if (mouseKolom >= spelerKolom - aanvalBereik &&
-                mouseKolom <= spelerKolom + aanvalBereik && 
-                mouseRij >= spelerRij - aanvalBereik && 
-                mouseRij <= spelerRij + aanvalBereik &&
-                !(mouseRij == spelerRij &&
-                mouseKolom == spelerKolom) && veld[mouseRij][mouseKolom] !== zwart){
+            if (mouseKolom >= wieIsSpelerKolom - aanvalBereik &&
+                mouseKolom <= wieIsSpelerKolom + aanvalBereik && 
+                mouseRij >= wieIsSpelerRij - aanvalBereik && 
+                mouseRij <= wieIsSpelerRij + aanvalBereik &&
+                !(mouseRij == wieIsSpelerRij &&
+                mouseKolom == wieIsSpelerKolom) && veld[mouseRij][mouseKolom] !== zwart){
                     if(mouseButton === LEFT){
-                        veranderKleurRondSpeler(lichtblauw,donkerblauw);
+                        veranderKleurRondSpeler(lichtblauw,donkerblauw,welkeSpelerKolom,welkeSpelerRij);
                         veld[mouseRij].splice(mouseKolom,1,lichtblauw)
                     }
             }            
@@ -272,8 +286,8 @@ var selecteerVak = function() {
 
 var deselecteerVak = function () {
     // een vak deselecteren
-        if(keyIsPressed === true && keyCode === ESCAPE) {
-            veranderKleurRondSpeler(lichtblauw,donkerblauw);
+        if(keyIsPressed === true && keyCode === BACKSPACE) {
+            veranderKleurRondSpeler(lichtblauw,donkerblauw,welkeSpelerKolom,welkeSpelerRij);
         }
 }        
         
@@ -282,7 +296,7 @@ var tekenTegel = function(kolom, rij) {
     if (veld[rij][kolom] === wit) {
     fill(255, 255, 255);
   } else if (veld[rij][kolom] === zwart) {
-    fill(kleurTegelNulR, kleurTegelNulG, kleurTegelNulB);
+    fill(0, 0, 0);
   } else if (veld[rij][kolom] === oranje) {
     fill(100, 255, 100);
   } else if (veld[rij][kolom] === donkerblauw) {
@@ -332,6 +346,9 @@ var tekenVeld = function () {
 
     //terugknop
     terugKnop();
+
+    //wie is er aan de beurt
+    wieIsAanDeBeurt();
 }
 
 // tekent de speler
@@ -350,11 +367,11 @@ var tekenVijand = function(vijandKolom, vijandRij) {
 var aanvallen = function() {
     // aanvalmogelijkheden -- vakjes die aangevallen kunnen worden veranderen van kleur
     if (aanvalActie === true) {
-        veranderKleurRondSpeler(wit,donkerblauw);
-        vijandDetectie();
+        veranderKleurRondSpeler(wit,donkerblauw,welkeSpelerKolom,welkeSpelerRij);
+        vijandDetectie(welkeSpelerKolom,welkeSpelerRij,welkeVijandRij,welkeVijandKolom);
         aanvalVakSelectie();
 
-        if(veld[vijandRij][vijandKolom] === lichtblauw){
+        if(veld[welkeVijandRij][welkeVijandKolom] === lichtblauw){
             document.body.onkeyup = function(e){
                 if(e.keyCode == 32){
                     spacebar = true;
@@ -367,20 +384,21 @@ var aanvallen = function() {
         }
 
         if(aanvalKlaar === true) {
-            veranderKleurRondSpeler(donkerblauw,wit);
-            veranderKleurRondSpeler(lichtblauw,wit);
+            veranderKleurRondSpeler(donkerblauw,wit,welkeSpelerKolom,welkeSpelerRij);
+            veranderKleurRondSpeler(lichtblauw,wit,welkeSpelerKolom,welkeSpelerRij);
+            beurtCheck();
             aanvalActie = false;
             aanvalKlaar = false;
-        } 
+        }
     }    
 }
 
 // oudekleur = oude kleur vakje
 // nieuwekleur = nieuwe kleur vakje
-var veranderKleurRondSpeler = function(oudekleur,nieuwekleur) {
-    for(var k = spelerKolom - aanvalBereik; k < spelerKolom + aanvalBereik + 1; k++){
-        for(var r = spelerRij - aanvalBereik; r < spelerRij + aanvalBereik + 1; r++){
-		    if(!(k === spelerKolom && r === spelerRij) && veld[r][k] === oudekleur) {
+var veranderKleurRondSpeler = function(oudekleur,nieuwekleur,wieIsSpelerKolom,wieIsSpelerRij) {
+    for(var k = wieIsSpelerKolom - aanvalBereik; k < wieIsSpelerKolom + aanvalBereik + 1; k++){
+        for(var r = wieIsSpelerRij - aanvalBereik; r < wieIsSpelerRij + aanvalBereik + 1; r++){
+		    if(!(k === wieIsSpelerKolom && r === wieIsSpelerRij) && veld[r][k] === oudekleur) {
 				veld[r].splice(k,1,nieuwekleur)
 			}
         }
@@ -389,9 +407,9 @@ var veranderKleurRondSpeler = function(oudekleur,nieuwekleur) {
 
 
 var gameOver = function() {
-    if(vijandLevens <=  0) {
+    if(vijandLevens <=  0 || spelerLevens <= 0) {
         spelStatus = GAMEOVER;
-    }
+    } 
 }
 // wordt er op de spacebar gedrukt?
 
@@ -401,7 +419,12 @@ var gameOver = function() {
 var schadeDoenTegenVijand = function() {    
     aanvalSelectie();
     hoeveelSchade(standaarSchadeArray[welkeAanval]);
-    vijandLevens = vijandLevens - schade;
+    if(spelerTurn === true) {
+        vijandLevens = vijandLevens - schade;
+    }
+    if(vijandTurn === true) {
+        spelerLevens = spelerLevens - schade;
+    }
     levensVanVijand();
     aanvalKlaar = true;
     spacebar = false;
@@ -409,16 +432,14 @@ var schadeDoenTegenVijand = function() {
     rect(1050, 150, 220, 50);
     fill(0, 0, 0);
     text(aanvalTekst, 1083, 186);
-    aanvalKnopStatus = false;
-    spelerTurn = false;
-    vijandTurn = true;    
+    aanvalKnopStatus = false; 
 }
 
 // detecteert of de vijand in het aanvalbereik zit
-var vijandDetectie = function() {
-    for(var k = spelerKolom - aanvalBereik; k < spelerKolom + aanvalBereik + 1; k++){
-        for(var r = spelerRij - aanvalBereik; r < spelerRij + aanvalBereik + 1; r++){
-		    if(vijandRij === r && vijandKolom === k) {
+var vijandDetectie = function(wieIsSpelerKolom,wieIsSpelerRij,wieIsVijandRij, wieIsVijandKolom) {
+    for(var k = wieIsSpelerKolom - aanvalBereik; k < wieIsSpelerKolom + aanvalBereik + 1; k++){
+        for(var r = wieIsSpelerRij - aanvalBereik; r < wieIsSpelerRij + aanvalBereik + 1; r++){
+		    if(wieIsVijandRij === r && wieIsVijandKolom === k) {
                 vijandBinnenBereik = true;
             }
         }
@@ -453,29 +474,6 @@ var turnVijand = function() {
     // meer opties later
 }
 
-// simuleert wat de vijand kan doen en wat de uitkomst daarvan is en beslist
-// op  basis daarvan wat de vijand doet
-var besteOptie = function() {
-    return Math.floor(random(0,3));
-}
-
-// beweegt de vijand
-var beweegVijand = function() {
-    vijandTurn = false;
-    spelerTurn = true;
-    console.log("vijand beweegt")
-}
-
-// vijand kan aanvallen
-var vijandAanval = function() {
-    vijandTurn = false;
-    spelerTurn = true;
-    console.log("vijand valt aan")
-}
-
-var opnieuwSpelen = function() {
-
-}
 var gameOverScherm = function() {
     createCanvas(1280, 720);
     background("blue")
@@ -494,7 +492,31 @@ var gameOverScherm = function() {
     }
 }
 
+var beurtCheck = function(){
+    if(spelerTurn === true) {
+        spelerTurn = false;
+        vijandTurn = true;
+    } else if (vijandTurn === true) {
+        spelerTurn = true;
+        vijandTurn = false;
+    }
+}
 
+var welkeSpelerRijKolom = function() {
+    if(spelerTurn === true){
+        welkeSpelerKolom = spelerKolom;
+        welkeSpelerRij = spelerRij;
+        welkeVijandKolom = vijandKolom;
+        welkeVijandRij = vijandRij;
+        aanDeBeurt = "Speler 1";
+    } else if(vijandTurn === true){
+        welkeSpelerRij = vijandRij;
+        welkeSpelerKolom = vijandKolom;
+        welkeVijandRij = spelerRij;
+        welkeVijandKolom = spelerKolom;
+        aanDeBeurt = "Speler 2";
+    }
+}
 
 
 
@@ -524,6 +546,7 @@ function draw() {
   console.log("start draw");
   switch (spelStatus) {
     case SPELEN:
+        welkeSpelerRijKolom();
         tekenVeld();
         tekenSpeler(spelerKolom, spelerRij);
         tekenVijand(vijandKolom, vijandRij);
@@ -533,7 +556,7 @@ function draw() {
         }
 
         if(vijandTurn === true) {
-            turnVijand();
+            aanvallen();
         }
 
         levensVanSpeler();
