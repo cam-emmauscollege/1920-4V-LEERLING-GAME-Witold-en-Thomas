@@ -71,7 +71,7 @@ var score = 0; // aantal behaalde punten
 
 var schade = 0; // hoeveel schade doe je als je iemand raakt
 var spelerLevens = 100; // hoeveel levens heeft de speler
-var vijandLevens = 500; // hoeveel levens heeft de vijand
+var vijandLevens = 100; // hoeveel levens heeft de vijand
 
 
 var tegelBreedte = 40, tegelHoogte = 40;
