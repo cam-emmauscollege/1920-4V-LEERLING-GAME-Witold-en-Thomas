@@ -353,7 +353,7 @@ var tekenTegel = function(kolom, rij) {
     if (veld[rij][kolom] === wit) {
     fill(255, 255, 255);
   } else if (veld[rij][kolom] === zwart) {
-    fill(kleurTegelNulR, kleurTegelNulG, kleurTegelNulB);
+    fill(0, 0, 0);
   } else if (veld[rij][kolom] === oranje) {
     fill(255, 102, 0);
   } else if (veld[rij][kolom] === donkerblauw) {
@@ -509,24 +509,24 @@ var bewegen = function() {
     if(beweegActie === true) {
         veranderKleurRondSpeler(wit, donkerblauw);
         beweegVakSelectie();
-        var rij = 0;
-        var kolom = 0;
-        for(rij = spelerRij - aanvalBereik; rij < spelerRij + aanvalBereik + 1; rij++){
-            for(kolom = spelerKolom - aanvalBereik; kolom < spelerKolom + aanvalBereik + 1; kolom++){
-                if(veld[rij][kolom] === lichtblauw) {
-                    if(mouseIsPressed) {
-                        if(mouseButton === LEFT) {
-                            spelerKolom = mouseKolom;
-                            spelerRij = mouseRij;
-                        }
-                    } else if(keyIsPressed) {
-                        if(e.keycode == 27) {
-                            beweegActie = false;
-                            beweegKnopStatus = false;
+        for(var r = spelerRij - aanvalBereik; r < spelerRij + aanvalBereik + 1; r++){
+            for(var k = spelerKolom - aanvalBereik; k < spelerKolom + aanvalBereik + 1; k++){
+                if(!(k === spelerKolom && r === spelerRij) && !(k < 0 || k > max_kolom -1) && !(r < 0 || r > max_rij - 1)) {
+                    if(veld[r][k] === lichtblauw) {
+                        if(mouseIsPressed) {
+                            if(mouseButton === LEFT) {
+                                spelerKolom = mouseKolom;
+                                spelerRij = mouseRij;
+                            }
+                        } else if(keyIsPressed) {
+                            if(e.keycode == 27) {
+                                beweegActie = false;
+                                beweegKnopStatus = false;
+                            }
                         }
                     }
                 }
-            }        
+            }
         }
     }
 }
