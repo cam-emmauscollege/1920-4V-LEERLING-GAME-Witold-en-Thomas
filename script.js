@@ -72,7 +72,8 @@ var kogelY = 0;    // y-positie van kogel
 var vijandKolom = 12;   // x-positie van vijand
 var vijandRij = 2;   // y-positie van vijand
 
-var score = 0; // aantal behaalde punten
+var beurt = 0; 
+var maxBeurten = 20; //maximale aantal beurten per spel
 
 var schade = 0; // hoeveel schade doe je als je iemand raakt
 var spelerLevens = 100; // hoeveel levens heeft de speler
@@ -81,38 +82,8 @@ var vijandLevens = 100; // hoeveel levens heeft de vijand
 var tegelBreedte = 40, tegelHoogte = 40;
 var veldBreedte = 1280 / tegelBreedte - 6, veldHoogte = 720 / tegelHoogte;
 
-var mouseBuitenVeld = false;
+var mouseBuitenVeld = false; //als de muis buiten veld is, niet bewegen of schieten
 //aanvalvakken selecteerstatus
-
-
-// hieruit wordt de standaardschade gehaald als je iets aanvalt
-var standaarSchadeArray = [30,40,50]  // WIP -- schade nu is testschade
-//welke aanval wordt er gedaan en de bijbehorende schade
-// deze variabele wordt aangepast afhankelijk van welke aanval er geselecteerd wordt.
-var welkeAanval = 0;
-
-var veld = [
-        [1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1], //0
-        [1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1], //1
-        [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //2
-        [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //3
-        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1], //4
-        [1, 1, 1, 1, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1], //5
-        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 2, 2, 2, 1, 2, 2, 2, 0, 0, 1, 0, 0, 1, 1, 1, 1], //6
-        [1, 1, 0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 2, 2, 2, 2, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1], //7
-        [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1], //8
-        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1], //9
-        [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1], //10
-        [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1], //11
-        [1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1], //12
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //13        
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1], //14
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1], //15
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1], //16
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //17
-]; // dit is het veld (A site Inferno)
-
-
 
 // hieruit wordt de standaardschade gehaald als je iets aanvalt
 var standaarSchadeArray = [30,40,50]  // WIP -- schade nu is testschade
@@ -245,12 +216,12 @@ var hoeveelSchade = function (standaardSchade) {
 
 var beweegKnop = function() {
     fill(255, 255, 255);
-    rect(1050, 80, 220, 50);
+    rect(1050, 230, 220, 50);
     fill(0, 0, 0);
-    text(beweegTekst, 1085, 117);
+    text(beweegTekst, 1085, 267);
 
     if(mouseIsPressed) {
-        if (mouseButton === LEFT && mouseY >= 80 && mouseY <= 130 && mouseX >= 1050 && mouseX <= 1270 && beweegpuntenSpeler > 0){
+        if (mouseButton === LEFT && mouseY >= 230 && mouseY <= 280 && mouseX >= 1050 && mouseX <= 1270 && beweegpuntenSpeler > 0){
             beweegActie = true;
             beweegKnopStatus = true;
             aanvalActie = false;
@@ -268,13 +239,13 @@ var beweegKnop = function() {
 
     if(beweegKnopStatus === true){
             fill(47, 255, 0);
-            rect(1050, 80, 220, 50);
+            rect(1050, 230, 220, 50);
             fill(0, 0, 0);
-            text(beweegTekst, 1085, 117);
+            text(beweegTekst, 1085, 267);
     }
 }
 
-var terugKnop = function(){
+var terugKnop = function(){  //
     strokeWeight(1)
     stroke(0,0,0)
     fill(255, 255, 255);
@@ -290,14 +261,11 @@ var terugKnop = function(){
             mouseY <= 620 &&
             mouseY >= 520) {
                 aanvalActie = false;
+                beweegActie = false;
                 veranderKleurRondSpeler(donkerblauw,wit);
-                aanvalTekst = "Aanvallen";
-                fill(255, 255, 255);
-                rect(1050, 150, 220, 50);
-                fill(0, 0, 0);
-                text(aanvalTekst, 1083, 186);
                 veranderKleurRondSpeler(lichtblauw,wit);
                 aanvalKnopStatus = false;
+                beweegKnopStatus = false;
         }
     }
 }
@@ -305,12 +273,12 @@ var terugKnop = function(){
 var aanvalKnop = function() {
     // aanvalknop -- als je hierop klikt kan je de vijand aanvallen.
     fill(255, 255, 255);
-    rect(1050, 150, 220, 50);
+    rect(1050, 300, 220, 50);
     fill(0, 0, 0);
-    text(aanvalTekst, 1083, 186);
+    text(aanvalTekst, 1083, 336);
 
     if(mouseIsPressed) {
-        if (mouseButton === LEFT && mouseY >= 150 && mouseY <= 200 && mouseX >= 1050 && mouseX <= 1270){
+        if (mouseButton === LEFT && mouseY >= 300 && mouseY <= 350 && mouseX >= 1050 && mouseX <= 1270){
             aanvalActie = true;
             aanvalKnopStatus = true;
             beweegActie = false;
@@ -328,9 +296,9 @@ var aanvalKnop = function() {
 
     if(aanvalKnopStatus === true){
             fill(47, 255, 0);
-            rect(1050, 150, 220, 50);
+            rect(1050, 300, 220, 50);
             fill(0, 0, 0);
-            text(aanvalTekst, 1083, 186);
+            text(aanvalTekst, 1083, 336);
     }
 }
 
@@ -413,16 +381,28 @@ var tekenVeld = function() {
     fill(255, 0, 0);
     rect(1040, 0, 240, 720);
 
+    
+    //info
+    textSize(16);
+    fill(0, 0, 0);
+    text("Beurt: " + beurt + "/" + maxBeurten, 1050, 30);
+    text("Bewegingspunten over: " + beweegpuntenSpeler, 1050, 60);
+    //text("Wapen: " + wapenSpeler, 1050, 90); als we tijd hebben
+    //text("Kogels over: " + kogelsOverSpeler, 1050, 120); 
+    //text("Reservekogels over: " + reserveKogelsOverSeler, 1050, 150);
+
     //einde beurtknop
     fill(200, 0, 150);
-    rect(1040, 620, 240, 720);
+    rect(1040, 820, 240, 720);
     fill(0, 0, 0);
     textSize(35);
     text("Einde beurt", 1070, 680);
 
+
     //actieknoppen
-    text("Acties", 1100, 50);
-    line(1040, 60, 1280, 60);
+    text("Acties", 1100, 200);
+    line(1040, 160, 1280, 160); //waarom werkt dit niet?
+    rect(1040, 159, 240, 2);
     
     //bewegen
     beweegKnop();
