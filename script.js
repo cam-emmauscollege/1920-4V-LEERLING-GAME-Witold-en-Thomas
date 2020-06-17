@@ -487,13 +487,13 @@ var aanvallen = function() {
 var veranderKleurRondSpeler = function(oudekleur,nieuwekleur,wieIsSpelerKolom,wieIsSpelerRij) {
     for(var k = wieIsSpelerKolom - aanvalBereik; k < wieIsSpelerKolom + aanvalBereik + 1; k++){
         for(var r = wieIsSpelerRij - aanvalBereik; r < wieIsSpelerRij + aanvalBereik + 1; r++){
-		    if(!(k === wieIsSpelerKolom && r === wieIsSpelerRij) && veld[r][k] === oudekleur) {
-				veld[r].splice(k,1,nieuwekleur)
-			}
+		    if(!(k === wieIsSpelerKolom && r === wieIsSpelerRij) && !(k < 0 || k > max_kolom -1) && !(r < 0 || r > max_rij - 1) && veld[r][k] === oudekleur) {
+                    veld[r].splice(k,1,nieuwekleur)
+                
+            }
         }
     }
 }
-
 var veranderKleur = function(oudekleur1,nieuwekleur) {
     for(var r = 0; r <= max_rij - 1; r++) {
         for(var k = 0; k <= max_kolom - 1; k++) {
@@ -510,7 +510,6 @@ var gameOver = function() {
     } 
 }
 
-// wordt er op de spacebar gedrukt?
 
 
 // als er op de spacebar gedrukt wordt en het vak van de vijand is geselecteerd
@@ -551,13 +550,13 @@ var aanvalSelectie = function(){
  * Kijkt wat de toetsen/muis etc zijn.
  * Updatet globale variabele spelerX en spelerY
  */
-var bewegen = function() {
+var bewegen = function(wieIsSpelerKolom,wieIsSpelerRij) {
     if(beweegActie === true) {
-        veranderKleurRondSpeler(wit, donkerblauw);
+        veranderKleurRondSpeler(wit, donkerblauw,welkeSpelerKolom,welkeSpelerRij);
         beweegVakSelectie();
-        for(var r = spelerRij - aanvalBereik; r < spelerRij + aanvalBereik + 1; r++){
-            for(var k = spelerKolom - aanvalBereik; k < spelerKolom + aanvalBereik + 1; k++){
-                if(!(k === spelerKolom && r === spelerRij) && !(k < 0 || k > max_kolom -1) && !(r < 0 || r > max_rij - 1)) {
+        for(var r = wieIsSpelerRij - aanvalBereik; r < wieIsSpelerRij + aanvalBereik + 1; r++){
+            for(var k = wieIsSpelerKolom - aanvalBereik; k < wieIsSpelerKolom + aanvalBereik + 1; k++){
+                if(!(k === wieIsSpelerKolom && r === wieIsSpelerRij) && !(k < 0 || k > max_kolom -1) && !(r < 0 || r > max_rij - 1)) {
                     if(veld[r][k] === lichtblauw) {
                         if(mouseIsPressed) {
                             if(mouseButton === LEFT) {
@@ -567,7 +566,6 @@ var bewegen = function() {
                                 tekenSpeler(spelerKolom,spelerRij);
                                 veranderKleur(donkerblauw,wit);
                                 veranderKleur(lichtblauw,wit);
-                                
                             }
                         } else if(keyIsPressed) {
                             if(e.keycode == 27) {
@@ -669,7 +667,7 @@ function draw() {
         if(spelerTurn === true) {
             beginBeurtSpeler();
             aanvallen();
-            bewegen();
+            bewegen(welkeSpelerKolom,welkeSpelerRij);
         }
 
         if(vijandTurn === true) {
