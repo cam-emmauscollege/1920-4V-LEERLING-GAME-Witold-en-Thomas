@@ -469,6 +469,15 @@ var veranderKleurRondSpeler = function(oudekleur,nieuwekleur) {
     }
 }
 
+var veranderKleur = function(oudekleur1,nieuwekleur) {
+    for(var r = 0; r <= max_rij - 1; r++) {
+        for(var k = 0; k <= max_kolom - 1; k++) {
+        if(veld[r][k] === oudekleur1) {
+            veld[r].splice(k,1,nieuwekleur);
+            }
+        }
+    }
+}
 
 var gameOver = function() {
     if(vijandLevens <=  0) {
@@ -527,10 +536,13 @@ var bewegen = function() {
                     if(veld[r][k] === lichtblauw) {
                         if(mouseIsPressed) {
                             if(mouseButton === LEFT) {
-                                return spelerKolom = mouseKolom;
-                                return spelerRij = mouseRij;
-                                return beweegpuntenSpeler--;
-                                tekenSpeler();
+                                spelerKolom = mouseKolom();
+                                spelerRij = mouseRij();
+                                beweegpuntenSpeler--;
+                                tekenSpeler(spelerKolom,spelerRij);
+                                veranderKleur(donkerblauw,wit);
+                                veranderKleur(lichtblauw,wit);
+                                
                             }
                         } else if(keyIsPressed) {
                             if(e.keycode == 27) {
