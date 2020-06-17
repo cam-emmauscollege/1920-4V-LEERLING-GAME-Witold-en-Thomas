@@ -56,6 +56,7 @@ var aanvalKnopStatus = false;
 var aanvalKlaar = false;
 var spacebar = false;
 var vijandBinnenBereik = false;
+var spelerHeeftAangevallen = false; //max 1 aanval per beurt
 
 var beweegActie = false;
 var beweegTekst = "Bewegen";
@@ -69,8 +70,8 @@ var spelerRij = 17; // y-positie van speler
 var kogelX = 0;    // x-positie van kogel
 var kogelY = 0;    // y-positie van kogel
 
-var vijandKolom = 12;   // x-positie van vijand
-var vijandRij = 2;   // y-positie van vijand
+var vijandKolom = 10;   // x-positie van vijand
+var vijandRij = 16;   // y-positie van vijand
 
 var beurt = 0; 
 var maxBeurten = 20; //maximale aantal beurten per spel
@@ -402,7 +403,7 @@ var tekenVeld = function() {
     //actieknoppen
     text("Acties", 1100, 200);
     line(1040, 160, 1280, 160); //waarom werkt dit niet?
-    rect(1040, 159, 240, 2);
+    rect(1040, 159, 240, 2)
     
     //bewegen
     beweegKnop();
@@ -451,6 +452,7 @@ var aanvallen = function() {
             veranderKleurRondSpeler(lichtblauw,wit);
             aanvalActie = false;
             aanvalKlaar = false;
+            spelerHeeftAangevallen = true; 
         } 
     }    
 }
@@ -507,7 +509,7 @@ var vijandDetectie = function() {
 
 // aanvalselectie is tijdelijk random
 var aanvalSelectie = function(){
-    welkeAanval = Math.floor(random(0,standaarSchadeArray.length));
+    welkeAanval = Math.floor(random(0, standaarSchadeArray.length));
 }
 
 
@@ -525,8 +527,10 @@ var bewegen = function() {
                     if(veld[r][k] === lichtblauw) {
                         if(mouseIsPressed) {
                             if(mouseButton === LEFT) {
-                                spelerKolom = mouseKolom;
-                                spelerRij = mouseRij;
+                                return spelerKolom = mouseKolom;
+                                return spelerRij = mouseRij;
+                                return beweegpuntenSpeler--;
+                                tekenSpeler();
                             }
                         } else if(keyIsPressed) {
                             if(e.keycode == 27) {
@@ -594,10 +598,11 @@ var gameOverScherm = function() {
     }
 }
 
-
-
-
-
+var beginBeurtSpeler = function() {
+    beurt++;
+    beweegpuntenSpeler = 5;
+    spelerHeeftAangevallen = false;
+}
 
 /**
  * setup
@@ -629,6 +634,7 @@ function draw() {
         tekenVijand(vijandKolom, vijandRij);
 
         if(spelerTurn === true) {
+            beginBeurtSpeler();
             aanvallen();
             bewegen();
         }
