@@ -368,7 +368,7 @@ var aanvallen = function() {
     // aanvalmogelijkheden -- vakjes die aangevallen kunnen worden veranderen van kleur
     if (aanvalActie === true) {
         veranderKleurRondSpeler(wit,donkerblauw,welkeSpelerKolom,welkeSpelerRij);
-        vijandDetectie(welkeSpelerKolom,welkeSpelerRij,welkeVijandRij,welkeVijandKolom);
+        vijandDetectie(welkeVijandRij,welkeVijandKolom);
         aanvalVakSelectie();
 
         if(veld[welkeVijandRij][welkeVijandKolom] === lichtblauw){
@@ -379,8 +379,9 @@ var aanvallen = function() {
             }
         }
 
-        if(spacebar === true){
+        if(spacebar === true && vijandBinnenBereik === true){
         schadeDoenTegenVijand();
+        vijandBinnenBereik = false;
         }
 
         if(aanvalKlaar === true) {
@@ -436,14 +437,10 @@ var schadeDoenTegenVijand = function() {
 }
 
 // detecteert of de vijand in het aanvalbereik zit
-var vijandDetectie = function(wieIsSpelerKolom,wieIsSpelerRij,wieIsVijandRij, wieIsVijandKolom) {
-    for(var k = wieIsSpelerKolom - aanvalBereik; k < wieIsSpelerKolom + aanvalBereik + 1; k++){
-        for(var r = wieIsSpelerRij - aanvalBereik; r < wieIsSpelerRij + aanvalBereik + 1; r++){
-		    if(wieIsVijandRij === r && wieIsVijandKolom === k) {
-                vijandBinnenBereik = true;
-            }
-        }
-    }
+var vijandDetectie = function(wieIsVijandRij, wieIsVijandKolom) {
+    if(veld[wieIsVijandRij][wieIsVijandKolom] === lichtblauw){
+        vijandBinnenBereik = true;
+    }   
 }
 
 // aanvalselectie is tijdelijk random
