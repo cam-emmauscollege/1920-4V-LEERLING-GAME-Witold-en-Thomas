@@ -284,7 +284,7 @@ var terugKnop = function(){
                 fill(255, 255, 255);
                 rect(1050, 330, 220, 50);
                 fill(0, 0, 0);
-                text(aanvalTekst, 1113, 366);
+                text(aanvalTekst, 1083, 366);
                 veranderKleurRondSpeler(lichtblauw,wit,welkeSpelerKolom,welkeSpelerRij);
                 aanvalKnopStatus = false;
                 beweegKnopStatus = false;
@@ -582,7 +582,7 @@ var aanvalSelectie = function(){
  */
 var bewegen = function(wieIsSpelerKolom,wieIsSpelerRij) {
     if(beweegActie === true) {
-        veranderKleurRondSpeler(wit, donkerblauw,welkeSpelerKolom,welkeSpelerRij);
+        veranderKleurRondSpeler(wit,donkerblauw,welkeSpelerKolom,welkeSpelerRij);
         beweegVakSelectie();
         for(var r = wieIsSpelerRij - aanvalBereik; r < wieIsSpelerRij + aanvalBereik + 1; r++){
             for(var k = wieIsSpelerKolom - aanvalBereik; k < wieIsSpelerKolom + aanvalBereik + 1; k++){
@@ -590,14 +590,27 @@ var bewegen = function(wieIsSpelerKolom,wieIsSpelerRij) {
                     if(veld[r][k] === lichtblauw) {
                         if(mouseIsPressed) {
                             if(mouseButton === LEFT) {
-                                spelerKolom = mouseKolom();
-                                spelerRij = mouseRij();
-                                beweegpuntenSpeler--;
+                                welkeSpelerKolom = mouseKolom();
+                                welkeSpelerRij = mouseRij();
+                                if(spelerTurn === true) {
+                                    beweegpuntenSpeler--;
+                                } else if (vijandTurn === true){
+                                    beweegpuntenVijand--;
+                                }
                                 tekenSpeler(spelerKolom,spelerRij);
+                                tekenVijand(vijandKolom,vijandRij);
                                 veranderKleur(donkerblauw,wit);
                                 veranderKleur(lichtblauw,wit);
                                 if(beweegpuntenSpeler === 0) {
                                     beurtVeranderen();
+                                    beweegpuntenSpeler = 5;
+                                    beweegKnopReset();
+                                    
+                                }
+                                if(beweegpuntenVijand === 0) {
+                                    beurtVeranderen();
+                                    beweegpuntenVijand = 5;
+                                    beweegKnopReset();
                                 }
                             }
                         } else if(keyIsPressed) {
@@ -613,6 +626,14 @@ var bewegen = function(wieIsSpelerKolom,wieIsSpelerRij) {
     }
 }
 
+var beweegKnopReset = function() {
+    fill(255, 255, 255);
+    rect(1050, 260, 220, 50);
+    fill(0, 0, 0);
+    text(beweegTekst, 1083, 297);
+    beweegActie = false;
+    beweegKnopStatus = false;
+}
 var gameOverScherm = function() {
     createCanvas(1280, 720);
     background("blue")
