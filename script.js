@@ -307,6 +307,17 @@ var aanvalKnop = function() {
     }
 }
 
+
+function mouseClicked() {
+    if (mouseY >= 620 && mouseY <= 720 && mouseX >= 1040 && mouseX <= 1280) {
+        aanvalActie = false;
+        aanvalKnopStatus = false;
+        beweegActie = false;
+        beweegKnopStatus = false;
+        beurtVeranderen();
+    }
+}
+
 var eindeBeurtKnop = function() {
     fill(200, 0, 150);
     rect(1040, 620, 240, 100);
@@ -314,15 +325,9 @@ var eindeBeurtKnop = function() {
     textSize(35);
     text("Einde beurt", 1070, 680);
 
-    if(mouseIsPressed) {
-        if (mouseButton === LEFT && mouseY >= 620 && mouseY <= 720 && mouseX >= 1040 && mouseX <= 1280) {
-            aanvalActie = false;
-            aanvalKnopStatus = false;
-            beweegActie = false;
-            beweegKnopStatus = false;
-            beurtVeranderen();
-        }
-    }
+    
+
+    
 }
 
 var aanvalVakSelectie = function() {
