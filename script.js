@@ -1,7 +1,7 @@
 // @ts-nocheck
 
-// VERSIE 0.5
-
+// VERSIE 0.6 (game werkt in primitief)
+// NIET TIJDENS AANVAL VERANDEREN NAAR BEWEGEN!!!!
 /// <reference path=".gitpod/p5.global-mode.d.ts" />
 "use strict";
 
@@ -20,16 +20,21 @@ const gamelogging = true;
 /* globale variabelen die je gebruikt in je game */
 /* ********************************************* */
 
+
+// spelstatussen
 const STARTSCHERM = 0;
 const SPELEN = 1;
 const GAMEOVER = 2;
 const UITLEG = 3;
+var spelStatus = STARTSCHERM;
 
+//coördinaten van de speel- en uitlegknop
 const xPlayButton = 540;
 const yPlayButton = 100;
 const xUitlegButton = 540;
 const yUitlegButton = 200;
 
+//kleuren van het veld
 const wit = 0;
 const zwart = 1;
 const oranje = 2;
@@ -37,11 +42,12 @@ const donkerblauw = 3;
 const lichtblauw = 4;
 const lichtgroen = 5;
 
+//wie is aan de beurt?
 var spelerTurn = true;
 var vijandTurn = false;
-var spelStatus = STARTSCHERM;
 
-var schade = 0;
+
+var schade = 0; // hoeveel schade?
 
 // kolom is verticale verplaatsing, rij is horizontale verplaatsing
 
@@ -50,20 +56,19 @@ var welkeSpelerRij = 0; // relatief aan welke speler wordt een functie gebruikt
 var welkeVijandKolom = 0; // relatief aan welke vijand wordt een functie gebruikt
 var welkeVijandRij = 0; // relatief aan welke vijand wordt een functie gebruikt
 
-var aanDeBeurt = "iemand";
+var aanDeBeurt = "iemand";// welke speler is aan de beurt?
 var aanvalBereik = 1; // hoeveel tegels om je heen kan je aanvallen
 var aanvalActie = false; // ben je aan het aanvallen ja of nee
 var aanvalTekst = "Aanvallen"; // tekst aanvalknop
-var aanvalKnopStatus = false;
-var aanvalKlaar = false;
-var spacebar = false;
-var vijandBinnenBereik = false;
+var aanvalKnopStatus = false;//is de aanvalknop groen?
+var aanvalKlaar = false;//is de aanval afgelopen?
+var spacebar = false;//wordt de spatiebalk ingedrukt?
+var vijandBinnenBereik = false;//is de vijand binnen het aanvalbereik?
 var spelerHeeftAangevallen = false; //max 1 aanval per beurt
 
-var aanvalUit = false;
-var beweegActie = false;
-var beweegTekst = "Bewegen";
-var beweegKnopStatus = false;
+var beweegActie = false; // is een beweging gestart?
+var beweegTekst = "Bewegen"; // wleke tekst staat er op de beweegknop
+var beweegKnopStatus = false; //is de beweegknop groen?
 var beweegpunten = 5; //hoever je kan lopen per beurt
 var spelerKolom = 10; // x-positie van speler
 var spelerRij = 17; // y-positie van speler
@@ -74,16 +79,16 @@ var kogelY = 0;    // y-positie van kogel
 var vijandKolom = 10;   // x-positie van vijand
 var vijandRij = 16;   // y-positie van vijand
 
-var spelerBeurt = 0; 
-var vijandBeurt = 0;
+var spelerBeurt = 0; // hoeveel beurten heeft de speler gehad
+var vijandBeurt = 0; //hoeveel beurten heeft de vijand(speler2) gehad
 var maxBeurten = 20; //maximale aantal beurten per spel
 
 var schade = 0; // hoeveel schade doe je als je iemand raakt
 var spelerLevens = 100; // hoeveel levens heeft de speler
 var vijandLevens = 100; // hoeveel levens heeft de vijand
 
-var tegelBreedte = 40, tegelHoogte = 40;
-var veldBreedte = 1280 / tegelBreedte - 6, veldHoogte = 720 / tegelHoogte;
+var tegelBreedte = 40, tegelHoogte = 40; // hoe hoog en breed zijn de tegels van het veld
+var veldBreedte = 1280 / tegelBreedte - 6, veldHoogte = 720 / tegelHoogte; // hoeveel horizontale en verticale tegels zijn er
 
 var mouseBuitenVeld = false; //als de muis buiten veld is, niet bewegen of schieten
 //aanvalvakken selecteerstatus
@@ -115,9 +120,10 @@ var veld = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] //18
 ]; // dit is het veld (A site Inferno)
 
-var max_kolom = veld[0].length;
-var max_rij = veld.length;
+var max_kolom = veld[0].length; //wat is de hoogste index van een kolom?
+var max_rij = veld.length; // wat is de hoogste index van een rij?
 
+//functie om makkelijk te loggen of iets werkt
 var gamelog = function(text) {
     if (gamelogging) {
         console.log(text)
@@ -127,6 +133,7 @@ var gamelog = function(text) {
 /*      functies die je gebruikt in je game      */
 /* ********************************************* */
 
+//geeft de kolom waarim de muis zich bevind
 var mouseKolom = function() {
     if(mouseX >= 0 && mouseX < 1040 && mouseY >= 0 && mouseY < 720) {
         return Math.floor(mouseX / 40);
@@ -135,6 +142,7 @@ var mouseKolom = function() {
     }
 }
 
+//geeft de rij waarin de muis zich bevind
 var mouseRij = function() {
     if(mouseX >= 0 && mouseX < 1040 && mouseY >= 0 && mouseY < 720) {
         return Math.floor(mouseY / 40);
@@ -208,22 +216,29 @@ var hoeveelSchade = function (standaardSchade) {
     }
 
     if (omhoogOmlaag === 1) {
-        rngOmlaag()
+        rngOmlaag();
     }
 
     if (omhoogOmlaag === 2) {
-        rngOmhoog()
+        rngOmhoog();
     }
 
     schade = round(schade);
     
 }
 
-var beweegKnop = function() {
+//tekent de beweegknop
+var beweegKnopTekenen = function() {
+    textSize(35);
     fill(255, 255, 255);
     rect(1050, 260, 220, 50);
     fill(0, 0, 0);
     text(beweegTekst, 1083, 297);
+}
+
+//zorgt dat als de beweegknop gedrukt wordt dat de beweging wordt gestart
+var beweegKnop = function() {
+    
 
     if(mouseIsPressed) {
         if (mouseButton === LEFT && mouseY >= 260 && mouseY <= 310 && mouseX >= 1050 && mouseX <= 1270 && beweegpunten > 0) {
@@ -244,12 +259,10 @@ var beweegKnop = function() {
 
 
     if(beweegKnopStatus === true){
-        fill(47, 255, 0);
-        rect(1050, 260, 220, 50);
-        fill(0, 0, 0);
-        text(beweegTekst, 1083, 297);
+        beweegKnopTekenen(47,255,0);
     }
 }
+
 //laat zien wie er aan de beurt is
 var wieIsAanDeBeurt = function() {
     textSize(22);
@@ -280,10 +293,7 @@ var terugKnop = function(){
                 veranderKleurRondSpeler(lichtblauw,wit,welkeSpelerKolom,welkeSpelerRij);
                 veranderKleurRondSpeler(donkerblauw,wit,welkeSpelerKolom,welkeSpelerRij);
                 aanvalTekst = "Aanvallen";
-                fill(255, 255, 255);
-                rect(1050, 330, 220, 50);
-                fill(0, 0, 0);
-                text(aanvalTekst, 1083, 366);
+                aanvalKnopTekenen(255,255,255);
                 veranderKleurRondSpeler(lichtblauw,wit,welkeSpelerKolom,welkeSpelerRij);
                 aanvalKnopStatus = false;
                 beweegKnopStatus = false;
@@ -291,12 +301,18 @@ var terugKnop = function(){
     }
 }
 
-var aanvalKnop = function() {
-    // aanvalknop -- als je hierop klikt kan je de vijand aanvallen.
-    fill(255, 255, 255);
+//tekent de aanvalknop
+var aanvalKnopTekenen = function(r,g,b) {
+    textSize(35);
+    fill(r,g,b);
     rect(1050, 330, 220, 50);
     fill(0, 0, 0);
     text(aanvalTekst, 1083, 366);
+}
+
+// zorgt dat als je op de aanvalknop drukt de aanval gestart wordt
+var aanvalKnop = function() {
+    aanvalKnopTekenen(255,255,255);
 
     if(mouseIsPressed && spelerHeeftAangevallen === false) {
         if (mouseButton === LEFT && mouseY >= 330 && mouseY <= 380 && mouseX >= 1050 && mouseX <= 1270){
@@ -314,15 +330,12 @@ var aanvalKnop = function() {
             }
         }
 
-    if(aanvalKnopStatus === true){
-            fill(47, 255, 0);
-            rect(1050, 330, 220, 50);
-            fill(0, 0, 0);
-            text(aanvalTekst, 1083, 366);
+    if(aanvalKnopStatus === true && spelerHeeftAangevallen === false){
+            aanvalKnopTekenen(47,255,0);
     }
 }
 
-
+//zorgt dat de eindebeurtknop werkt.
 function mouseClicked() {
     if (mouseY >= 620 && mouseY <= 720 && mouseX >= 1040 && mouseX <= 1280) {
         aanvalActie = false;
@@ -333,18 +346,16 @@ function mouseClicked() {
     }
 }
 
+//tekent de eindebeurtknop
 var eindeBeurtKnop = function() {
     fill(200, 0, 150);
     rect(1040, 620, 240, 100);
     fill(0, 0, 0);
     textSize(35);
     text("Einde beurt", 1070, 680);
-
-    
-
-    
 }
 
+//selecteert en deselecteert de vakjes bij een aanval
 var aanvalVakSelectie = function() {
     if(aanvalActie === true) {
         deselecteerVak();
@@ -353,14 +364,16 @@ var aanvalVakSelectie = function() {
     }
 }
 
+// selecteert het vakje waar de speler heen beweegt
 var beweegVakSelectie = function() {
     if(beweegActie === true) {
-        deselecteerVak();
         selecteerVak(welkeSpelerKolom,welkeSpelerRij);
             
     }
 }
 
+
+// markeert een vakje tijdens aanval of beweging
 var selecteerVak = function(wieIsSpelerKolom,wieIsSpelerRij) {
     // alleen linkermuisknop detecteren als muis ingedrukt wordt
         if (mouseIsPressed) {
@@ -381,6 +394,7 @@ var selecteerVak = function(wieIsSpelerKolom,wieIsSpelerRij) {
         }
 }
 
+//deselecteert alle vakjes tijdens een aanval
 var deselecteerVak = function () {
     // een vak deselecteren
         if(keyIsPressed === true && keyCode === BACKSPACE) {
@@ -388,18 +402,21 @@ var deselecteerVak = function () {
         }
 }        
 
+// tekent hoeveel beurten de speler heeft gehad
 var spelerBeurten = function(){
     textSize(16);
     fill(0, 0, 0);
     text("Beurt speler 1: " + spelerBeurt + "/" + maxBeurten, 1050, 30);
 }
 
+//tekent hoeveel beurten de vijand(speler2) heeft gehad
 var vijandBeurten = function() {
     textSize(16);
     fill(0, 0, 0);
     text("Beurt speler 2: " + vijandBeurt + "/" + maxBeurten, 1050, 60);
 }
 
+// hoeveel vakjes kan een speler nog bewegen?
 var spelerBeweegpunten = function() {
     textSize(16);
     text("Bewegingspunten over: " + beweegpunten, 1050, 120);
@@ -547,10 +564,7 @@ var gameOver = function() {
 var maxEenKeerAanvallen = function() {
     if(spelerHeeftAangevallen === true) {
         aanvalActie = false;
-        fill(255, 140, 0);
-        rect(1050, 330, 220, 50);
-        fill(0, 0, 0);
-        text(aanvalTekst, 1083, 366);
+        aanvalKnopTekenen(255,140,0);
 
     }
 }
@@ -569,11 +583,7 @@ var schadeDoenTegenVijand = function() {
     levensVanVijand();
     aanvalKlaar = true;
     spacebar = false;
-    textSize(35);
-    fill(47, 255, 0);
-    rect(1050, 330, 220, 50);
-    fill(0, 0, 0);
-    text(aanvalTekst, 1083, 366);
+    aanvalKnopTekenen(47,255,0)
     aanvalKnopStatus = false;
 }
 
@@ -590,10 +600,7 @@ var aanvalSelectie = function(){
 }
 
 
-/**
- * Kijkt wat de toetsen/muis etc zijn.
- * Updatet globale variabele spelerX en spelerY
- */
+// functie voor beweging speler
 var bewegen = function(wieIsSpelerKolom,wieIsSpelerRij,wieIsVijandKolom,wieIsVijandRij) {
     if(beweegActie === true) {
         veranderKleurRondSpeler(wit,donkerblauw,welkeSpelerKolom,welkeSpelerRij);
@@ -617,7 +624,9 @@ var bewegen = function(wieIsSpelerKolom,wieIsSpelerRij,wieIsVijandKolom,wieIsVij
                                 veranderKleur(donkerblauw,wit);
                                 veranderKleur(lichtblauw,wit);
                                 if(beweegpunten === 0) {
-                                    beweegKnopReset();
+                                    beweegKnopTekenen(255,255,255);
+                                    beweegActie = false;
+                                    beweegKnopStatus = false;
                                 }
                             }
                         } else if(keyIsPressed) {
@@ -633,14 +642,7 @@ var bewegen = function(wieIsSpelerKolom,wieIsSpelerRij,wieIsVijandKolom,wieIsVij
     }
 }
 
-var beweegKnopReset = function() {
-    fill(255, 255, 255);
-    rect(1050, 260, 220, 50);
-    fill(0, 0, 0);
-    text(beweegTekst, 1083, 297);
-    beweegActie = false;
-    beweegKnopStatus = false;
-}
+//tekent het gameoverscherm als de game voorbij is
 var gameOverScherm = function() {
     createCanvas(1280, 720);
     background("blue")
@@ -659,6 +661,7 @@ var gameOverScherm = function() {
     }
 }
 
+//verandert de beurt naar de andere speler
 var beurtVeranderen = function(){
         if(spelerTurn === true) {
             beweegpunten = 5;
@@ -675,7 +678,7 @@ var beurtVeranderen = function(){
         }
 }
 
-
+//bepaald welke speler de speler is en welke speler de vijand
 var welkeSpelerRijKolom = function() {
     if(spelerTurn === true){
         welkeSpelerKolom = spelerKolom;
