@@ -587,13 +587,22 @@ var bewegen = function(wieIsSpelerKolom,wieIsSpelerRij) {
                     if(veld[r][k] === lichtblauw) {
                         if(mouseIsPressed) {
                             if(mouseButton === LEFT) {
-                                welkeSpelerKolom = mouseKolom();
-                                welkeSpelerRij = mouseRij();
+                                if(spelerTurn === true) {
+                                spelerKolom = mouseKolom();
+                                spelerRij = mouseRij();
+                                } else if(vijandTurn === true) {
+                                    vijandKolom = mouseKolom();
+                                    vijandRij = mouseRij();
+                                }
                                 beweegpunten--;
                                 tekenSpeler(spelerKolom,spelerRij);
                                 tekenVijand(vijandKolom,vijandRij);
                                 veranderKleur(donkerblauw,wit);
                                 veranderKleur(lichtblauw,wit);
+                                if(beweegpunten === 0) {
+                                    beurtVeranderen();
+                                    beweegKnopReset();
+                                }
                             }
                         } else if(keyIsPressed) {
                             if(e.keycode == 27) {
@@ -705,6 +714,7 @@ function draw() {
 
         if(vijandTurn === true) {
             aanvallen();
+            bewegen(welkeSpelerKolom,welkeSpelerRij);
         }
 
         levensVanSpeler();
