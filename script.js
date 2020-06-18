@@ -228,9 +228,9 @@ var hoeveelSchade = function (standaardSchade) {
 }
 
 //tekent de beweegknop
-var beweegKnopTekenen = function() {
+var beweegKnopTekenen = function(r,g,b) {
     textSize(35);
-    fill(255, 255, 255);
+    fill(r, g, b);
     rect(1050, 260, 220, 50);
     fill(0, 0, 0);
     text(beweegTekst, 1083, 297);
@@ -238,7 +238,7 @@ var beweegKnopTekenen = function() {
 
 //zorgt dat als de beweegknop gedrukt wordt dat de beweging wordt gestart
 var beweegKnop = function() {
-    
+    beweegKnopTekenen(255,255,255);
 
     if(mouseIsPressed) {
         if (mouseButton === LEFT && mouseY >= 260 && mouseY <= 310 && mouseX >= 1050 && mouseX <= 1270 && beweegpunten > 0) {
@@ -388,7 +388,7 @@ var selecteerVak = function(wieIsSpelerKolom,wieIsSpelerRij) {
                 mKolom == wieIsSpelerKolom) && veld[mRij][mKolom] !== zwart){
                     if(mouseButton === LEFT){
                         veranderKleurRondSpeler(lichtblauw,donkerblauw,welkeSpelerKolom,welkeSpelerRij);
-                        veld[mRij].splice(mKolom,1,lichtblauw)
+                        veld[mRij].splice(mKolom,1,lichtblauw);
                     }
             }            
         }
@@ -441,6 +441,8 @@ var tekenTegel = function(kolom, rij) {
   rect(kolom * 40, rij * 40, 40, 40);
 }
 
+
+// tekent het veld en de inbegrepen knoppen etc
 var tekenVeld = function() {
     stroke(255, 0, 115);
     strokeWeight(1);
@@ -501,6 +503,7 @@ var tekenVijand = function(vijandKolom, vijandRij) {
 }
 
 
+// zorgt ervoor dat de aanval uitgevoerd wordt
 var aanvallen = function() {
     // aanvalmogelijkheden -- vakjes die aangevallen kunnen worden veranderen van kleur
     if (aanvalActie === true) {
@@ -537,30 +540,31 @@ var veranderKleurRondSpeler = function(oudekleur,nieuwekleur,wieIsSpelerKolom,wi
     for(var k = wieIsSpelerKolom - aanvalBereik; k < wieIsSpelerKolom + aanvalBereik + 1; k++){
         for(var r = wieIsSpelerRij - aanvalBereik; r < wieIsSpelerRij + aanvalBereik + 1; r++){
 		    if(!(k === wieIsSpelerKolom && r === wieIsSpelerRij) && !(k < 0 || k > max_kolom -1) && !(r < 0 || r > max_rij - 1) && veld[r][k] === oudekleur) {
-                    veld[r].splice(k,1,nieuwekleur)
-                
+                    veld[r].splice(k,1,nieuwekleur);
             }
         }
     }
 }
 
-var veranderKleur = function(oudekleur1,nieuwekleur) {
+// verandert alle oude kleuren op het veld naar een nieuwe kleur
+var veranderKleur = function(oudekleur,nieuwekleur) {
     for(var r = 0; r <= max_rij - 1; r++) {
         for(var k = 0; k <= max_kolom - 1; k++) {
-        if(veld[r][k] === oudekleur1) {
+        if(veld[r][k] === oudekleur) {
             veld[r].splice(k,1,nieuwekleur);
             }
         }
     }
 }
 
+//wanneer is het gameover?
 var gameOver = function() {
-    if(vijandLevens <=  0 || spelerLevens <= 0) {
+    if(vijandLevens <=  0 || spelerLevens <= 0 || (spelerBeurten === 20 && vijandBeurten === 20)) {
         spelStatus = GAMEOVER;
     } 
 }
 
-
+// zorgt ervoor dat je maximaal 1 keer per beurt kan aanvallen
 var maxEenKeerAanvallen = function() {
     if(spelerHeeftAangevallen === true) {
         aanvalActie = false;
@@ -583,7 +587,7 @@ var schadeDoenTegenVijand = function() {
     levensVanVijand();
     aanvalKlaar = true;
     spacebar = false;
-    aanvalKnopTekenen(47,255,0)
+    aanvalKnopTekenen(47,255,0);
     aanvalKnopStatus = false;
 }
 
@@ -645,7 +649,7 @@ var bewegen = function(wieIsSpelerKolom,wieIsSpelerRij,wieIsVijandKolom,wieIsVij
 //tekent het gameoverscherm als de game voorbij is
 var gameOverScherm = function() {
     createCanvas(1280, 720);
-    background("blue")
+    background("blue");
     fill(3, 252, 61);
     rect(400,100,500, 100);
     fill(0,0,0);
