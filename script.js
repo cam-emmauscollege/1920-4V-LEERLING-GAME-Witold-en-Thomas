@@ -63,9 +63,7 @@ var spelerHeeftAangevallen = false; //max 1 aanval per beurt
 var beweegActie = false;
 var beweegTekst = "Bewegen";
 var beweegKnopStatus = false;
-var bewegingKlaar = false;
-var beweegpuntenSpeler = 5; //hoever je kan lopen per beurt
-var beweegpuntenVijand = 5;
+var beweegpunten = 5; //hoever je kan lopen per beurt
 var spelerKolom = 10; // x-positie van speler
 var spelerRij = 17; // y-positie van speler
 
@@ -100,10 +98,10 @@ var veld = [
         [1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1], //2
         [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //3
         [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //4
-        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1], //5
-        [1, 1, 1, 1, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1], //6
-        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 2, 2, 2, 1, 2, 2, 2, 0, 0, 1, 0, 0, 1, 1, 1, 1], //7
-        [1, 1, 0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 2, 2, 2, 2, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1], //8
+        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //5
+        [1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //6
+        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1], //7
+        [1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1], //8
         [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1], //9
         [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1], //10
         [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1], //11
@@ -227,7 +225,7 @@ var beweegKnop = function() {
     text(beweegTekst, 1083, 297);
 
     if(mouseIsPressed) {
-        if (mouseButton === LEFT && mouseY >= 260 && mouseY <= 310 && mouseX >= 1050 && mouseX <= 1270 && beweegpuntenSpeler > 0){
+        if (mouseButton === LEFT && mouseY >= 260 && mouseY <= 310 && mouseX >= 1050 && mouseX <= 1270 && beweegpunten > 0){
             beweegActie = true;
             beweegKnopStatus = true;
             aanvalActie = false;
@@ -235,7 +233,7 @@ var beweegKnop = function() {
         }
     }
     if(keyIsPressed) {
-        if(key === "m" && beweegpuntenSpeler > 0) {
+        if(key === "m" && beweegpunten > 0) {
             beweegActie = true;
             beweegKnopStatus = true;
             aanvalActie = false;
@@ -255,7 +253,7 @@ var beweegKnop = function() {
 var wieIsAanDeBeurt = function() {
     textSize(22);
     stroke(0,0,0);
-    strokeWeight(2);
+    strokeWeight(1.5);
     fill(0,0,0);
     text(aanDeBeurt + " is aan de beurt",1040,480,240,100);
 }
@@ -324,6 +322,23 @@ var aanvalKnop = function() {
     }
 }
 
+var eindeBeurtKnop = function() {
+    fill(200, 0, 150);
+    rect(1040, 620, 240, 100);
+    fill(0, 0, 0);
+    textSize(35);
+    text("Einde beurt", 1070, 680);
+
+    if(mouseIsPressed) {
+        if (mouseButton === LEFT && mouseY >= 620 && mouseY <= 720 && mouseX >= 1040 && mouseX <= 1280) {
+            aanvalActie = false;
+            aanvalKnopStatus = false;
+            beweegActie = false;
+            beweegKnopStatus = false;
+            beurtVeranderen();
+        }
+    }
+}
 
 var aanvalVakSelectie = function() {
     if(aanvalActie === true) {
@@ -382,15 +397,9 @@ var vijandBeurten = function() {
 
 var spelerBeweegpunten = function() {
     textSize(16);
-    text("Speler 1",1050,90);
-    text("Bewegingspunten over: " + beweegpuntenSpeler, 1050, 120);
+    text("Bewegingspunten over: " + beweegpunten, 1050, 120);
 }
 
-var vijandBeweegpunten = function() {
-    textSize(16);
-    text("Speler 2",1050,150);
-    text("Bewegingspunten over: " + beweegpuntenVijand, 1050, 180);
-}
 
 // tekent de vakjes als deze functie wordt aangeroepen
 var tekenTegel = function(kolom, rij) {
@@ -432,18 +441,12 @@ var tekenVeld = function() {
     spelerBeurten();
     vijandBeurten();
     spelerBeweegpunten();
-    vijandBeweegpunten();
     //text("Wapen: " + wapenSpeler, 1050, 90); als we tijd hebben
     //text("Kogels over: " + kogelsOverSpeler, 1050, 120); 
     //text("Reservekogels over: " + reserveKogelsOverSeler, 1050, 150);
 
     //einde beurtknop
-    fill(200, 0, 150);
-    rect(1040, 820, 240, 720);
-    fill(0, 0, 0);
-    textSize(35);
-    text("Einde beurt", 1070, 680);
-
+    eindeBeurtKnop();
 
     //actieknoppen
     text("Acties", 1100, 230);
@@ -499,13 +502,7 @@ var aanvallen = function() {
         if(aanvalKlaar === true) {
             veranderKleurRondSpeler(donkerblauw,wit,welkeSpelerKolom,welkeSpelerRij);
             veranderKleurRondSpeler(lichtblauw,wit,welkeSpelerKolom,welkeSpelerRij);
-            beurtVeranderen();
             aanvalActie = false;
-            if(spelerTurn === true){
-                spelerBeurt++;
-            } else if(vijandTurn === true){
-                vijandBeurt++;
-            }
             aanvalKlaar = false;
         } 
     }    
@@ -592,26 +589,11 @@ var bewegen = function(wieIsSpelerKolom,wieIsSpelerRij) {
                             if(mouseButton === LEFT) {
                                 welkeSpelerKolom = mouseKolom();
                                 welkeSpelerRij = mouseRij();
-                                if(spelerTurn === true) {
-                                    beweegpuntenSpeler--;
-                                } else if (vijandTurn === true){
-                                    beweegpuntenVijand--;
-                                }
+                                beweegpunten--;
                                 tekenSpeler(spelerKolom,spelerRij);
                                 tekenVijand(vijandKolom,vijandRij);
                                 veranderKleur(donkerblauw,wit);
                                 veranderKleur(lichtblauw,wit);
-                                if(beweegpuntenSpeler === 0) {
-                                    beurtVeranderen();
-                                    beweegpuntenSpeler = 5;
-                                    beweegKnopReset();
-                                    
-                                }
-                                if(beweegpuntenVijand === 0) {
-                                    beurtVeranderen();
-                                    beweegpuntenVijand = 5;
-                                    beweegKnopReset();
-                                }
                             }
                         } else if(keyIsPressed) {
                             if(e.keycode == 27) {
@@ -653,13 +635,17 @@ var gameOverScherm = function() {
 }
 
 var beurtVeranderen = function(){
-    if(spelerTurn === true) {
-        spelerTurn = false;
-        vijandTurn = true;
-    } else if (vijandTurn === true) {
-        spelerTurn = true;
-        vijandTurn = false;
-    }
+        if(spelerTurn === true) {
+            beweegpunten = 5;
+            vijandBeurt++;
+            spelerTurn = false;
+            vijandTurn = true;
+        } else if (vijandTurn === true) {
+            beweegpunten = 5;
+            spelerBeurt++;
+            spelerTurn = true;
+            vijandTurn = false;
+        }
 }
 
 
