@@ -226,20 +226,27 @@ var beweegKnop = function() {
     text(beweegTekst, 1083, 297);
 
     if(mouseIsPressed) {
-        if (mouseButton === LEFT && mouseY >= 260 && mouseY <= 310 && mouseX >= 1050 && mouseX <= 1270 && beweegpunten > 0){
+        if (mouseButton === LEFT && mouseY >= 260 && mouseY <= 310 && mouseX >= 1050 && mouseX <= 1270 && beweegpunten > 0) {
             beweegActie = true;
             beweegKnopStatus = true;
             aanvalActie = false;
             aanvalKnopStatus = false;
         }
+    } else if(keyIsPressed){
+            if(key = "m") {
+                beweegActie = true;
+                beweegKnopStatus = true;
+                aanvalActie = false;
+                aanvalKnopStatus = false;
+            }
     }
+}
 
-    if(beweegKnopStatus === true){
-            fill(47, 255, 0);
-            rect(1050, 260, 220, 50);
-            fill(0, 0, 0);
-            text(beweegTekst, 1083, 297);
-    }
+if(beweegKnopStatus === true){
+    fill(47, 255, 0);
+    rect(1050, 260, 220, 50);
+    fill(0, 0, 0);
+    text(beweegTekst, 1083, 297);
 }
 
 //laat zien wie er aan de beurt is
@@ -297,7 +304,14 @@ var aanvalKnop = function() {
             beweegActie = false;
             beweegKnopStatus = false;
         }
-    }
+    } else if(keyIsPressed){
+            if(key = "n") {
+            aanvalActie = true;
+            aanvalKnopStatus = true;
+            beweegActie = false;
+            beweegKnopStatus = false;
+            }
+        }
 
     if(aanvalKnopStatus === true){
             fill(47, 255, 0);
@@ -645,11 +659,13 @@ var gameOverScherm = function() {
 var beurtVeranderen = function(){
         if(spelerTurn === true) {
             beweegpunten = 5;
+            spelerHeeftAangevallen = false;
             vijandBeurt++;
             spelerTurn = false;
             vijandTurn = true;
         } else if (vijandTurn === true) {
             beweegpunten = 5;
+            spelerHeeftAangevallen = false;
             spelerBeurt++;
             spelerTurn = true;
             vijandTurn = false;
