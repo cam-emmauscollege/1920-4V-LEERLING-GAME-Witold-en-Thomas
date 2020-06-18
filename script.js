@@ -60,6 +60,7 @@ var spacebar = false;
 var vijandBinnenBereik = false;
 var spelerHeeftAangevallen = false; //max 1 aanval per beurt
 
+var aanvalUit = false;
 var beweegActie = false;
 var beweegTekst = "Bewegen";
 var beweegKnopStatus = false;
@@ -232,14 +233,6 @@ var beweegKnop = function() {
             aanvalKnopStatus = false;
         }
     }
-    if(keyIsPressed) {
-        if(key === "m" && beweegpunten > 0) {
-            beweegActie = true;
-            beweegKnopStatus = true;
-            aanvalActie = false;
-            aanvalKnopStatus = false;
-        }
-    }
 
     if(beweegKnopStatus === true){
             fill(47, 255, 0);
@@ -297,16 +290,8 @@ var aanvalKnop = function() {
     fill(0, 0, 0);
     text(aanvalTekst, 1083, 366);
 
-    if(mouseIsPressed) {
+    if(mouseIsPressed && spelerHeeftAangevallen === false) {
         if (mouseButton === LEFT && mouseY >= 330 && mouseY <= 380 && mouseX >= 1050 && mouseX <= 1270){
-            aanvalActie = true;
-            aanvalKnopStatus = true;
-            beweegActie = false;
-            beweegKnopStatus = false;
-        }
-    }
-    if(keyIsPressed) {
-        if(key === "n") {
             aanvalActie = true;
             aanvalKnopStatus = true;
             beweegActie = false;
@@ -500,9 +485,10 @@ var aanvallen = function() {
         }
 
         if(aanvalKlaar === true) {
+            spelerHeeftAangevallen = true;
             veranderKleurRondSpeler(donkerblauw,wit,welkeSpelerKolom,welkeSpelerRij);
             veranderKleurRondSpeler(lichtblauw,wit,welkeSpelerKolom,welkeSpelerRij);
-            aanvalActie = false;
+            maxEenKeerAanvallen();
             aanvalKlaar = false;
         } 
     }    
@@ -538,7 +524,16 @@ var gameOver = function() {
 }
 
 
-
+var maxEenKeerAanvallen = function() {
+    if(spelerHeeftAangevallen === true) {
+        aanvalActie = false;
+        fill(255, 140, 0);
+        rect(1050, 330, 220, 50);
+        fill(0, 0, 0);
+        text(aanvalTekst, 1083, 366);
+        gamelog("deze functie werkt");
+    }
+}
 // als er op de spacebar gedrukt wordt en het vak van de vijand is geselecteerd
 // doe dan x schade(schade is voorlopig nog random)
 var schadeDoenTegenVijand = function() {    
@@ -577,7 +572,7 @@ var aanvalSelectie = function(){
  * Kijkt wat de toetsen/muis etc zijn.
  * Updatet globale variabele spelerX en spelerY
  */
-var bewegen = function(wieIsSpelerKolom,wieIsSpelerRij) {
+var bewegen = function(wieIsSpelerKolom,wieIsSpelerRij,wieIsVijandKolom,wieIsVijandRij) {
     if(beweegActie === true) {
         veranderKleurRondSpeler(wit,donkerblauw,welkeSpelerKolom,welkeSpelerRij);
         beweegVakSelectie();
@@ -586,7 +581,7 @@ var bewegen = function(wieIsSpelerKolom,wieIsSpelerRij) {
                 if(!(k === wieIsSpelerKolom && r === wieIsSpelerRij) && !(k < 0 || k > max_kolom -1) && !(r < 0 || r > max_rij - 1)) {
                     if(veld[r][k] === lichtblauw) {
                         if(mouseIsPressed) {
-                            if(mouseButton === LEFT) {
+                            if(mouseButton === LEFT && !(mouseKolom() === wieIsVijandKolom && mouseRij() === wieIsVijandRij)) {
                                 if(spelerTurn === true) {
                                 spelerKolom = mouseKolom();
                                 spelerRij = mouseRij();
@@ -600,7 +595,6 @@ var bewegen = function(wieIsSpelerKolom,wieIsSpelerRij) {
                                 veranderKleur(donkerblauw,wit);
                                 veranderKleur(lichtblauw,wit);
                                 if(beweegpunten === 0) {
-                                    beurtVeranderen();
                                     beweegKnopReset();
                                 }
                             }
@@ -709,12 +703,12 @@ function draw() {
 
         if(spelerTurn === true) {
             aanvallen();
-            bewegen(welkeSpelerKolom,welkeSpelerRij);
+            bewegen(welkeSpelerKolom,welkeSpelerRij,welkeVijandKolom,welkeVijandRij);
         }
 
         if(vijandTurn === true) {
             aanvallen();
-            bewegen(welkeSpelerKolom,welkeSpelerRij);
+            bewegen(welkeSpelerKolom,welkeSpelerRij,welkeVijandKolom,welkeVijandRij);
         }
 
         levensVanSpeler();
