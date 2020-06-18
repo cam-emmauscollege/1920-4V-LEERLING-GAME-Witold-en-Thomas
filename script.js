@@ -232,13 +232,14 @@ var beweegKnop = function() {
             aanvalActie = false;
             aanvalKnopStatus = false;
         }
-    } else if(keyIsPressed){
-            if(key = "m") {
-                beweegActie = true;
-                beweegKnopStatus = true;
-                aanvalActie = false;
-                aanvalKnopStatus = false;
-            }
+    } 
+    if(keyIsPressed) {
+        if(key === "m") {
+            beweegActie = true;
+            beweegKnopStatus = true;
+            aanvalActie = false;
+            aanvalKnopStatus = false;
+        }
     }
 }
 
@@ -305,7 +306,7 @@ var aanvalKnop = function() {
             beweegKnopStatus = false;
         }
     } else if(keyIsPressed){
-            if(key = "n") {
+            if(key === "n") {
             aanvalActie = true;
             aanvalKnopStatus = true;
             beweegActie = false;
