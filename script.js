@@ -241,15 +241,15 @@ var beweegKnop = function() {
             aanvalKnopStatus = false;
         }
     }
-}
 
-if(beweegKnopStatus === true){
-    fill(47, 255, 0);
-    rect(1050, 260, 220, 50);
-    fill(0, 0, 0);
-    text(beweegTekst, 1083, 297);
-}
 
+    if(beweegKnopStatus === true){
+        fill(47, 255, 0);
+        rect(1050, 260, 220, 50);
+        fill(0, 0, 0);
+        text(beweegTekst, 1083, 297);
+    }
+}
 //laat zien wie er aan de beurt is
 var wieIsAanDeBeurt = function() {
     textSize(22);
@@ -551,9 +551,10 @@ var maxEenKeerAanvallen = function() {
         rect(1050, 330, 220, 50);
         fill(0, 0, 0);
         text(aanvalTekst, 1083, 366);
-        gamelog("deze functie werkt");
+
     }
 }
+
 // als er op de spacebar gedrukt wordt en het vak van de vijand is geselecteerd
 // doe dan x schade(schade is voorlopig nog random)
 var schadeDoenTegenVijand = function() {    
@@ -568,11 +569,12 @@ var schadeDoenTegenVijand = function() {
     levensVanVijand();
     aanvalKlaar = true;
     spacebar = false;
-    fill(255, 255, 255);
-    rect(1050, 150, 220, 50);
+    textSize(35);
+    fill(47, 255, 0);
+    rect(1050, 330, 220, 50);
     fill(0, 0, 0);
-    text(aanvalTekst, 1083, 186);
-    aanvalKnopStatus = false; 
+    text(aanvalTekst, 1083, 366);
+    aanvalKnopStatus = false;
 }
 
 // detecteert of de vijand in het aanvalbereik zit
