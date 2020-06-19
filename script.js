@@ -249,9 +249,9 @@ var hoeveelSchade = function (standaardSchade) {
 var beweegKnopTekenen = function(r,g,b) {
     textSize(35);
     fill(r, g, b);
-    rect(1050, 260, 220, 50);
+    rect(1050, 210, 220, 50);
     fill(0, 0, 0);
-    text(beweegTekst, 1083, 297);
+    text(beweegTekst, 1083, 247);
 }
 
 //zorgt dat als de beweegknop gedrukt wordt dat de beweging wordt gestart
@@ -259,7 +259,7 @@ var beweegKnop = function() {
     beweegKnopTekenen(255,255,255);
 
     if(mouseIsPressed) { //twee methodes om te gaan bewegen, de knop en de m-toets, ook als caps lock aan staat
-        if (mouseButton === LEFT && mouseY >= 260 && mouseY <= 310 && mouseX >= 1050 && mouseX <= 1270 && beweegpunten > 0) {
+        if (mouseButton === LEFT && mouseY >= 210 && mouseY <= 260 && mouseX >= 1050 && mouseX <= 1270 && beweegpunten > 0) {
             beweegActie = true;
             beweegKnopStatus = true;
             aanvalActie = false;
@@ -323,9 +323,9 @@ var terugKnop = function(){
 var aanvalKnopTekenen = function(r,g,b) {
     textSize(35);
     fill(r,g,b);
-    rect(1050, 330, 220, 50);
+    rect(1050, 280, 220, 50);
     fill(0, 0, 0);
-    text(aanvalTekst, 1083, 366);
+    text(aanvalTekst, 1083, 316);
 }
 
 // zorgt dat als je op de aanvalknop drukt de aanval gestart wordt
@@ -333,7 +333,7 @@ var aanvalKnop = function() {
     aanvalKnopTekenen(255,255,255);
 
     if(mouseIsPressed && aanvallenOver > 0) { //twee methodes om te gaan aanvallen, knop en n-toets, ook als caps lock aan staat
-        if (mouseButton === LEFT && mouseY >= 330 && mouseY <= 380 && mouseX >= 1050 && mouseX <= 1270){
+        if (mouseButton === LEFT && mouseY >= 280 && mouseY <= 330 && mouseX >= 1050 && mouseX <= 1270){
             aanvalActie = true;
             aanvalKnopStatus = true;
             beweegActie = false;
@@ -498,9 +498,9 @@ var tekenVeld = function() {
     eindeBeurtKnop();
 
     //actieknoppen
-    text("Acties", 1100, 230);
-    line(1040, 160, 1280, 160); //waarom werkt dit niet?
-    //rect(1040, 189, 240, 2);
+    text("Acties", 1105, 192);
+    rect(1040, 159, 240, 2);
+    rect(1040, 199, 240, 2);
     
     //bewegen
     beweegKnop();
