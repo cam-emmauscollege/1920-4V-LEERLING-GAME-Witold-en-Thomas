@@ -177,10 +177,11 @@ var uitlegButton = function () {
 
 //tekent het uitlegscherm
 var uitlegScherm = function () {
+    textSize(35);
     fill(3, 252, 61);
     rect(180,100,900,500);
     fill(0,0,0);
-    text("Hier komt de uitleg",200,150,850,480);
+    text("Het doel is de andere speler te doden. Je kan elke beurt 1 keer aanvallen en 5 vakjes bewegen. Om te bewegen kan je of op *m* klikken of op de knop *bewegen*. Om aan te vallen druk je op *n* of de *aanvallen* knop. Tijdens een aanval kan je als je een vijand geselecteerd hebt op de spatiebalk drukken om aan te vallen. Hoeveel schade je doet is voorlopig nog willekeurig van  minimaal 22 tot maximaal 62. Nadat beide spelers 20 beurten hebben gehad is het spel voorbij, tenzij een speler daarvoor al gedood is.",200,150,880,480);
 }
 
 // laat zien hoeveel levens speler 1/vijand nog heeft
