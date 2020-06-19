@@ -64,7 +64,8 @@ var aanvalKnopStatus = false;//is de aanvalknop groen?
 var aanvalKlaar = false;//is de aanval afgelopen?
 var spacebar = false;//wordt de spatiebalk ingedrukt?
 var vijandBinnenBereik = false;//is de vijand binnen het aanvalbereik?
-var spelerHeeftAangevallen = false; //max 1 aanval per beurt
+var aanvallenOver = 1; //max aantal aanvallen per beurt
+var spelerHeeftAangevallen = false; //checkt of de speler net heeft aangevallen
 
 var beweegActie = false; // is een beweging gestart?
 var beweegTekst = "Bewegen"; // wleke tekst staat er op de beweegknop
@@ -73,13 +74,10 @@ var beweegpunten = 5; //hoever je kan lopen per beurt
 var spelerKolom = 10; // x-positie van speler
 var spelerRij = 17; // y-positie van speler
 
-var kogelX = 0;    // x-positie van kogel
-var kogelY = 0;    // y-positie van kogel
+var vijandKolom = 11;   // x-positie van vijand
+var vijandRij = 2;   // y-positie van vijand
 
-var vijandKolom = 10;   // x-positie van vijand
-var vijandRij = 16;   // y-positie van vijand
-
-var spelerBeurt = 0; // hoeveel beurten heeft de speler gehad
+var spelerBeurt = 1; // hoeveel beurten heeft de speler gehad
 var vijandBeurt = 0; //hoeveel beurten heeft de vijand(speler2) gehad
 var maxBeurten = 20; //maximale aantal beurten per spel
 
@@ -249,7 +247,7 @@ var beweegKnop = function() {
         }
     } 
     if(keyIsPressed) {
-        if(key === "m") {
+        if(key === "m" && beweegpunten > 0) {
             beweegActie = true;
             beweegKnopStatus = true;
             aanvalActie = false;
@@ -314,7 +312,7 @@ var aanvalKnopTekenen = function(r,g,b) {
 var aanvalKnop = function() {
     aanvalKnopTekenen(255,255,255);
 
-    if(mouseIsPressed && spelerHeeftAangevallen === false) {
+    if(mouseIsPressed && aanvallenOver > 0) {
         if (mouseButton === LEFT && mouseY >= 330 && mouseY <= 380 && mouseX >= 1050 && mouseX <= 1270){
             aanvalActie = true;
             aanvalKnopStatus = true;
@@ -322,7 +320,7 @@ var aanvalKnop = function() {
             beweegKnopStatus = false;
         }
     } else if(keyIsPressed){
-            if(key === "n") {
+            if(key === "n" && aanvallenOver > 0) {
             aanvalActie = true;
             aanvalKnopStatus = true;
             beweegActie = false;
@@ -330,7 +328,7 @@ var aanvalKnop = function() {
             }
         }
 
-    if(aanvalKnopStatus === true && spelerHeeftAangevallen === false){
+    if(aanvalKnopStatus === true && aanvallenOver > 0){
             aanvalKnopTekenen(47,255,0);
     }
 }
@@ -419,7 +417,11 @@ var vijandBeurten = function() {
 // hoeveel vakjes kan een speler nog bewegen?
 var spelerBeweegpunten = function() {
     textSize(16);
-    text("Bewegingspunten over: " + beweegpunten, 1050, 120);
+    text("Bewegingspunten over: " + beweegpunten + "/5", 1050, 90);
+} 
+var spelerAanvallenOver = function() {
+    textSize(16);
+    text("Aanvallen over: " + aanvallenOver + "/1", 1050, 120);
 }
 
 
@@ -465,6 +467,7 @@ var tekenVeld = function() {
     spelerBeurten();
     vijandBeurten();
     spelerBeweegpunten();
+    spelerAanvallenOver();
     //text("Wapen: " + wapenSpeler, 1050, 90); als we tijd hebben
     //text("Kogels over: " + kogelsOverSpeler, 1050, 120); 
     //text("Reservekogels over: " + reserveKogelsOverSeler, 1050, 150);
@@ -522,14 +525,17 @@ var aanvallen = function() {
         if(spacebar === true && vijandBinnenBereik === true){
         schadeDoenTegenVijand();
         vijandBinnenBereik = false;
-        }
+        } 
 
         if(aanvalKlaar === true) {
-            spelerHeeftAangevallen = true;
+            aanvallenOver--;
             veranderKleurRondSpeler(donkerblauw,wit,welkeSpelerKolom,welkeSpelerRij);
             veranderKleurRondSpeler(lichtblauw,wit,welkeSpelerKolom,welkeSpelerRij);
-            maxEenKeerAanvallen();
+            if(aanvallenOver === 0) {
+                geenAanvallenOver();
+            }
             aanvalKlaar = false;
+            aanvalActie = false;
         } 
     }    
 }
@@ -565,12 +571,8 @@ var gameOver = function() {
 }
 
 // zorgt ervoor dat je maximaal 1 keer per beurt kan aanvallen
-var maxEenKeerAanvallen = function() {
-    if(spelerHeeftAangevallen === true) {
-        aanvalActie = false;
-        aanvalKnopTekenen(255,140,0);
-
-    }
+var geenAanvallenOver = function() {
+    aanvalKnopTekenen(255,140,0);
 }
 
 // als er op de spacebar gedrukt wordt en het vak van de vijand is geselecteerd
@@ -669,13 +671,13 @@ var gameOverScherm = function() {
 var beurtVeranderen = function(){
         if(spelerTurn === true) {
             beweegpunten = 5;
-            spelerHeeftAangevallen = false;
+            aanvallenOver = 1;
             vijandBeurt++;
             spelerTurn = false;
             vijandTurn = true;
         } else if (vijandTurn === true) {
             beweegpunten = 5;
-            spelerHeeftAangevallen = false;
+            aanvallenOver = 1;
             spelerBeurt++;
             spelerTurn = true;
             vijandTurn = false;
