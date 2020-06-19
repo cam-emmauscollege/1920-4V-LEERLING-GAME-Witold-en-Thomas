@@ -238,7 +238,7 @@ var beweegKnopTekenen = function(r,g,b) {
 var beweegKnop = function() {
     beweegKnopTekenen(255,255,255);
 
-    if(mouseIsPressed) {
+    if(mouseIsPressed) { //twee methodes om te gaan bewegen, de knop en de m-toets
         if (mouseButton === LEFT && mouseY >= 260 && mouseY <= 310 && mouseX >= 1050 && mouseX <= 1270 && beweegpunten > 0) {
             beweegActie = true;
             beweegKnopStatus = true;
@@ -312,7 +312,7 @@ var aanvalKnopTekenen = function(r,g,b) {
 var aanvalKnop = function() {
     aanvalKnopTekenen(255,255,255);
 
-    if(mouseIsPressed && aanvallenOver > 0) {
+    if(mouseIsPressed && aanvallenOver > 0) { //twee methodes om te gaan aanvallen, knop en n-toets
         if (mouseButton === LEFT && mouseY >= 330 && mouseY <= 380 && mouseX >= 1050 && mouseX <= 1270){
             aanvalActie = true;
             aanvalKnopStatus = true;
@@ -468,7 +468,7 @@ var tekenVeld = function() {
     vijandBeurten();
     spelerBeweegpunten();
     spelerAanvallenOver();
-    //text("Wapen: " + wapenSpeler, 1050, 90); als we tijd hebben
+    //text("Wapen: " + wapenSpeler, 1050, 90); als we tijd hebben (nee)
     //text("Kogels over: " + kogelsOverSpeler, 1050, 120); 
     //text("Reservekogels over: " + reserveKogelsOverSeler, 1050, 150);
 
@@ -478,7 +478,7 @@ var tekenVeld = function() {
     //actieknoppen
     text("Acties", 1100, 230);
     line(1040, 160, 1280, 160); //waarom werkt dit niet?
-    rect(1040, 189, 240, 2);
+    //rect(1040, 189, 240, 2);
     
     //bewegen
     beweegKnop();
