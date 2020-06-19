@@ -77,7 +77,7 @@ var beweegpunten = 0; //hoever je kan lopen per beurt
 var spelerKolom = 0; // x-positie van speler
 var spelerRij = 0; // y-positie van speler
 var startSpelerKolom = 10; //x-positie van speler op het begin - Geen const om als we meer maps willen, dan zijn de startposities op andere plekken 
-var startSpelerRij = 14; //y-positie van speler op het begin
+var startSpelerRij = 15; //y-positie van speler op het begin
 
 var vijandKolom = 0;   // x-positie van vijand 
 var vijandRij = 0;   // y-positie van vijand 
@@ -130,18 +130,18 @@ var welkeAanval = 0;
 var veld = [ 
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //1  26 kolommen - een wat kleinere map dan eers om turtling 
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //2 te voorkomen (turtling is dat je puur defensief speelt)
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1], //3
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //4
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //5
-        [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //6
-        [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //7
-        [1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //8
-        [1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1], //9
-        [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1], //10
-        [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //11
-        [1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //12
-        [1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //13
-        [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //14        
+        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1], //3
+        [1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //4
+        [1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //5
+        [1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //6
+        [1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //7
+        [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //8
+        [1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1], //9
+        [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1], //10
+        [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //11
+        [1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1], //12
+        [1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1], //13
+        [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //14        
         [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //15
         [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //16
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //17
@@ -472,8 +472,8 @@ var spelerAanvallenOver = function() {
 }
 
 
-// tekent de vakjes als deze functie wordt aangeroepen
-var tekenTegel = function(kolom, rij) {
+// tekent de vakjes als deze functie wordt aangeroepen, er zijn nog een paar extra kleuren als we later daarmee iets willen doen
+var tekenTegel = function(kolom, rij) { 
     if (veld[rij][kolom] === wit) {
     fill(255, 255, 255);
   } else if (veld[rij][kolom] === zwart) {
@@ -806,10 +806,10 @@ var uitlegScherm = function () {
     text("Het doel is om de andere speler uit te schakelen. Het spel is opgedeel in beurten. Er zijn twee acties: bewegen en aanvallen.\n\n" + 
     "- Bewegen: Je kan maximaal 5 stappen zetten per beurt. Om te bewegen kan je of op 'm' klikken of op de knop 'bewegen'. Dan klik je op een blauwgekleurd vakje om erheen te bewegen.\n" +
     "- Aanvallen: Om aan te vallen moet je naast de vijand staan. Dan druk je op 'n' of de 'aanvallen' knop. Vervolgens moet je het vakje selecteren waar de vijand op staat. " +
-    "Druk op 'spatie' om aan te vallen. Je doet minimaal 22, en maximaal 62 schade. je hebt 1 aanval per beurt.\n\nAls je een actie hebt geselecteerd, maar je wilt terug, " +
+    "Druk op 'spatie' om aan te vallen. Je doet minimaal 22, en maximaal 62 schade. Je hebt 1 aanval per beurt.\n\nAls je een actie hebt geselecteerd, maar je wilt terug, " +
     "dan moet je op de terugknop drukken. Als je klaar bent met je beurt, druk dan op einde beurt. Dan is je tegenstander aan zet.\n" +
-    "Dit gaat zo door totdat: \n1) de ene speler al zijn levenspunten verloren heeft, dan wint de andere speler\n2) speler 1(groen) de rand van het bord " +
-    "aan de kant van de tegenstander bereikt\n3) allebei de spelers 20 beurten hebben gehad, dan wint speler 2(rood)", 100, 100, 1000);
+    "Dit gaat zo door totdat: \n1) de ene speler al zijn levenspunten verloren heeft, dan wint de andere speler.\n2) speler 1(groen) de rand van het bord " +
+    "aan de kant van de tegenstander bereikt, dan wint speler 1. \n3) allebei de spelers 20 beurten hebben gehad, dan wint speler 2(rood). ", 100, 100, 1000);
     textSize(50);
     text("Terug", 85, 615);
     if(mouseIsPressed && mouseX <= 250 && mouseY <= 650 && mouseX >= 50 && mouseY >= 550) {
