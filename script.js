@@ -50,8 +50,6 @@ var spelerTurn = true;
 var vijandTurn = false;
 
 
-var schade = 0; // hoeveel schade?
-
 // kolom is verticale verplaatsing, rij is horizontale verplaatsing
 
 var welkeSpelerKolom = 0; // relatief aan welke speler wordt een functie gebruikt
@@ -78,13 +76,20 @@ var beweegKnopStatus = false; //is de beweegknop groen?
 var beweegpunten = 0; //hoever je kan lopen per beurt
 var spelerKolom = 0; // x-positie van speler
 var spelerRij = 0; // y-positie van speler
+var startSpelerKolom = 10; //x-positie van speler op het begin - Geen const om als we meer maps willen, dan zijn de startposities op andere plekken 
+var startSpelerRij = 14; //y-positie van speler op het begin
 
-var vijandKolom = 0;   // x-positie van vijand 11
-var vijandRij = 0;   // y-positie van vijand 3
+var vijandKolom = 0;   // x-positie van vijand 
+var vijandRij = 0;   // y-positie van vijand 
+var startVijandKolom = 13; //x-positie van vijand op het begin
+var startVijandRij = 1; //y-positie van vijand op het begin
 
 var spelerBeurt = 0; // hoeveel beurten heeft de speler gehad
 var vijandBeurt = 0; //hoeveel beurten heeft de vijand(speler2) gehad
 var maxBeurten = 20; //maximale aantal beurten per spel
+
+var winnaar;
+var redenWinst;
 
 var schade = 0; // hoeveel schade doe je als je iemand raakt
 var spelerLevens = 100; // hoeveel levens heeft de speler
@@ -102,7 +107,7 @@ var standaarSchadeArray = [30,40,50]  // WIP -- schade nu is testschade
 // deze variabele wordt aangepast afhankelijk van welke aanval er geselecteerd wordt.
 var welkeAanval = 0;
 
-var veld = [
+/*var veld = [
         [1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1], //1 - 26 kolommen
         [1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1], //2
         [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //3
@@ -121,7 +126,27 @@ var veld = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1], //16
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1], //17
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] //18
-]; // dit is het veld (A site Inferno)
+];*/ // dit is het veld (A site Inferno)
+var veld = [ 
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //1  26 kolommen - een wat kleinere map dan eers om turtling 
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //2 te voorkomen (turtling is dat je puur defensief speelt)
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1], //3
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //4
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //5
+        [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //6
+        [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //7
+        [1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], //8
+        [1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1], //9
+        [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1], //10
+        [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //11
+        [1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //12
+        [1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //13
+        [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //14        
+        [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //15
+        [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //16
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //17
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] //18
+];
 
 var max_kolom = veld[0].length; //wat is de hoogste index van een kolom?
 var max_rij = veld.length; // wat is de hoogste index van een rij?
@@ -169,10 +194,10 @@ var speelKnop = function() {
         vijandBeurt = 0;
         beweegpunten = 5;
         aanvallenOver = 1;
-        spelerKolom = 10;
-        spelerRij = 17;
-        vijandKolom = 11;
-        vijandRij = 3;
+        spelerKolom = startSpelerKolom;
+        spelerRij = startSpelerRij;
+        vijandKolom = startVijandKolom;
+        vijandRij = startVijandRij;
         spelStatus = SPELEN;
     } 
 }
@@ -587,10 +612,24 @@ var veranderKleur = function(oudekleur,nieuwekleur) {
 
 //wanneer is het gameover?
 var gameOver = function() {
-    if(vijandLevens <=  0 || spelerLevens <= 0 || spelerBeurt > 20) {
+    if(vijandLevens <=  0) {
         spelStatus = GAMEOVER;
-    } 
-}
+        winnaar = "speler 1";
+        redenWinst = "de tegenstander uit te schakelen."
+    } else if(spelerRij === 0) {
+        spelStatus = GAMEOVER;
+        winnaar = "speler 1";
+        redenWinst = "de rand van de tegenstander te bereiken."
+    } else if(spelerLevens <= 0) {
+        spelStatus = GAMEOVER;
+        winnaar = "speler 2";
+        redenWinst = "de tegenstander uit te schakelen"
+    } else if(spelerBeurt > 20) {
+        spelStatus = GAMEOVER;
+        winnaar = "speler 2";
+        redenWinst = "het bereiken van het maximale aantal beurten."
+    }
+} 
 
 // zorgt ervoor dat je maximaal 1 keer per beurt kan aanvallen
 var geenAanvallenOver = function() {
@@ -675,12 +714,12 @@ var bewegen = function(wieIsSpelerKolom,wieIsSpelerRij,wieIsVijandKolom,wieIsVij
 //tekent het gameoverscherm als de game voorbij is
 var gameOverScherm = function() {
     createCanvas(1280, 720);
-    if(vijandLevens <= 0) {
+    if(winnaar === "speler 1") {
         background('green');
         fill(0, 0, 0);
-        textSize(40);
+        textSize(35);
         strokeWeight(1);
-        text("Speler 1 heeft gewonnen door de tegenstander uit te schakelen.", 70, 125);
+        text("Speler 1 heeft gewonnen door " + redenWinst, 70, 50, 1000);
         textSize(30);
         if(totaalAanvallenSpeler === 1) {
             text("Speler 1 heeft in 1 aanval " + (100-vijandLevens) + " schade gedaan.", 330, 185);
@@ -692,12 +731,12 @@ var gameOverScherm = function() {
         } else {
             text("Speler 2 heeft in " + totaalAanvallenVijand + " aanvallen " + (100-spelerLevens) + " schade gedaan.", 330, 220);
         }
-    } else if(spelerLevens <= 0) {
+    } else if(winnaar === "speler 2") {
         background('red');
         fill(0, 0, 0);
-        textSize(40);
+        textSize(35);
         strokeWeight(1);
-        text("Speler 2 heeft gewonnen door de tegenstander uit te schakelen.", 70, 125);
+        text("Speler 2 heeft gewonnen door " + redenWinst, 70, 50, 1000);
         textSize(30);
         if(totaalAanvallenSpeler === 1) {
             text("Speler 1 heeft in 1 aanval " + (100-vijandLevens) + " schade gedaan.", 330, 185);
@@ -709,7 +748,7 @@ var gameOverScherm = function() {
         } else {
             text("Speler 2 heeft in " + totaalAanvallenVijand + " aanvallen " + (100-spelerLevens) + " schade gedaan.", 330, 220);
         }
-    } else {
+    } /*else {
         background('yellow');
         fill(0, 0, 0);
         textSize(40);
@@ -726,7 +765,7 @@ var gameOverScherm = function() {
         } else {
             text("Speler 2 heeft in " + totaalAanvallenVijand + " aanvallen " + (100-spelerLevens) + " schade gedaan.", 330, 220);
         }
-    }
+    } */
 
     fill(3, 252, 61);
     rect(50, 550, 400, 100);
@@ -745,10 +784,10 @@ var gameOverScherm = function() {
         vijandBeurt = 0;
         beweegpunten = 5;
         aanvallenOver = 1;
-        spelerKolom = 10;
-        spelerRij = 17;
-        vijandKolom = 11;
-        vijandRij = 3;
+        spelerKolom = startSpelerKolom;
+        spelerRij = startSpelerRij;
+        vijandKolom = startVijandKolom;
+        vijandRij = startVijandRij;
         spelStatus = SPELEN;
     } else if(mouseIsPressed && mouseX <= 450 && mouseY <= 650 && mouseX >= 50 && mouseY >= 550) {
         spelStatus = STARTSCHERM;
@@ -769,8 +808,8 @@ var uitlegScherm = function () {
     "- Aanvallen: Om aan te vallen moet je naast de vijand staan. Dan druk je op 'n' of de 'aanvallen' knop. Vervolgens moet je het vakje selecteren waar de vijand op staat. " +
     "Druk op 'spatie' om aan te vallen. Je doet minimaal 22, en maximaal 62 schade. je hebt 1 aanval per beurt.\n\nAls je een actie hebt geselecteerd, maar je wilt terug, " +
     "dan moet je op de terugknop drukken. Als je klaar bent met je beurt, druk dan op einde beurt. Dan is je tegenstander aan zet.\n" +
-    "Dit gaat zo door totdat beide spelers 20 beurten hebben gehad, of als een speler all zijn levenspunten verloren heeft. In het eerste geval is het een gelijkspel, " +
-    "in het tweede geval wint de speler die nog in leven is.", 100, 100, 1000);
+    "Dit gaat zo door totdat: \n1) de ene speler al zijn levenspunten verloren heeft, dan wint de andere speler\n2) speler 1(groen) de rand van het bord " +
+    "aan de kant van de tegenstander bereikt\n3) allebei de spelers 20 beurten hebben gehad, dan wint speler 2(rood)", 100, 100, 1000);
     textSize(50);
     text("Terug", 85, 615);
     if(mouseIsPressed && mouseX <= 250 && mouseY <= 650 && mouseX >= 50 && mouseY >= 550) {
