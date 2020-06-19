@@ -26,13 +26,16 @@ const STARTSCHERM = 0;
 const SPELEN = 1;
 const GAMEOVER = 2;
 const UITLEG = 3;
+const CREDITS = 4;
 var spelStatus = STARTSCHERM;
 
 //coördinaten van de speel- en uitlegknop
-const xPlayButton = 540;
-const yPlayButton = 100;
-const xUitlegButton = 540;
-const yUitlegButton = 200;
+const xSpeelKnop = 540;
+const ySpeelKnop = 250;
+const xUitlegKnop = 540;
+const yUitlegKnop = 350;
+const xCreditsKnop = 540;
+const yCreditsKnop = 450;
 
 //kleuren van het veld
 const wit = 0;
@@ -152,14 +155,14 @@ var mouseRij = function() {
 }
 
 // tekent de speelknop
-var speelButton = function() {
+var speelKnop = function() {
     fill(3, 252, 61);
-    rect(xPlayButton,yPlayButton,200, 80);
+    rect(xSpeelKnop,ySpeelKnop, 200, 80);
     fill(0,0,0);
     textSize(50);
-    text("Spelen",560,115,730,170);
+    text("Spelen", 560, 268, 730, 170);
 
-    if(mouseIsPressed && mouseX <= xPlayButton + 200 && mouseY <= yPlayButton + 80 && mouseX >= xPlayButton && mouseY >= yPlayButton) {
+    if(mouseIsPressed && mouseX <= xSpeelKnop + 200 && mouseY <= ySpeelKnop + 80 && mouseX >= xSpeelKnop && mouseY >= ySpeelKnop) {
         spelerLevens = 100;
         vijandLevens = 100;
         spelerBeurt= 1;
@@ -175,25 +178,29 @@ var speelButton = function() {
 }
 
 // tekent de uitlegknop
-var uitlegButton = function () {
+var uitlegKnop = function () {
     fill(3, 252, 61);
-    rect(xUitlegButton,yUitlegButton,200,80);
+    rect(xUitlegKnop,yUitlegKnop,200,80);
     fill(0,0,0);
     textSize(50);
-    text("Uitleg",575,215,730,270);
+    text("Uitleg", 575, 368, 730, 270);
 
-    if(mouseIsPressed && mouseX < xUitlegButton + 200 && mouseX > xUitlegButton && mouseY < yUitlegButton + 80 && mouseY > yUitlegButton) {
+    if(mouseIsPressed && mouseX < xUitlegKnop + 200 && mouseX > xUitlegKnop && mouseY < yUitlegKnop + 80 && mouseY > yUitlegKnop) {
         spelStatus = UITLEG;
     }
 }
 
-//tekent het uitlegscherm
-var uitlegScherm = function () {
-    textSize(35);
+//tekent de creditsknop
+var creditsKnop = function() {
     fill(3, 252, 61);
-    rect(180,100,900,500);
+    rect(xCreditsKnop,yCreditsKnop,200,80);
     fill(0,0,0);
-    text("Het doel is de andere speler te doden. Je kan elke beurt 1 keer aanvallen en 5 vakjes bewegen. Om te bewegen kan je of op *m* klikken of op de knop *bewegen*. Om aan te vallen druk je op *n* of de *aanvallen* knop. Tijdens een aanval kan je als je een vijand geselecteerd hebt op de spatiebalk drukken om aan te vallen. Hoeveel schade je doet is voorlopig nog willekeurig van  minimaal 22 tot maximaal 62. Nadat beide spelers 20 beurten hebben gehad is het spel voorbij, tenzij een speler daarvoor al gedood is.",200,150,880,480);
+    textSize(50);
+    text("Credits", 560, 468, 730, 370);
+
+    if(mouseIsPressed && mouseX < xCreditsKnop + 200 && mouseX > xCreditsKnop && mouseY < yCreditsKnop + 80 && mouseY > yCreditsKnop) {
+        spelStatus = CREDITS;
+    }
 }
 
 // laat zien hoeveel levens speler 1/vijand nog heeft
@@ -673,51 +680,51 @@ var gameOverScherm = function() {
         fill(0, 0, 0);
         textSize(40);
         strokeWeight(1);
-        text("Speler 1 heeft gewonnen door de tegenstander uit te schakelen", 50, 125);
-        textSize(20);
+        text("Speler 1 heeft gewonnen door de tegenstander uit te schakelen.", 70, 125);
+        textSize(30);
         if(totaalAanvallenSpeler === 1) {
-            text("Speler 1 heeft in 1 aanval " + (100-vijandLevens) + " schade gedaan.", 300, 175);
+            text("Speler 1 heeft in 1 aanval " + (100-vijandLevens) + " schade gedaan.", 330, 185);
         } else {
-            text("Speler 1 heeft in " + totaalAanvallenSpeler + " aanvallen " + (100-vijandLevens) + " schade gedaan.", 300, 175);
+            text("Speler 1 heeft in " + totaalAanvallenSpeler + " aanvallen " + (100-vijandLevens) + " schade gedaan.", 330, 185);
         }
         if(totaalAanvallenVijand === 1) {
-            text("Speler 2 heeft in 1 aanval " + (100-spelerLevens) + " schade gedaan.", 300, 200);
+            text("Speler 2 heeft in 1 aanval " + (100-spelerLevens) + " schade gedaan.", 330, 220);
         } else {
-            text("Speler 2 heeft in " + totaalAanvallenVijand + " aanvallen " + (100-spelerLevens) + " schade gedaan.", 300, 200);
+            text("Speler 2 heeft in " + totaalAanvallenVijand + " aanvallen " + (100-spelerLevens) + " schade gedaan.", 330, 220);
         }
     } else if(spelerLevens <= 0) {
         background('red');
         fill(0, 0, 0);
         textSize(40);
         strokeWeight(1);
-        text("Speler 2 heeft gewonnen door de tegenstander uit te schakelen", 50, 125);
-        textSize(20);
+        text("Speler 2 heeft gewonnen door de tegenstander uit te schakelen.", 70, 125);
+        textSize(30);
         if(totaalAanvallenSpeler === 1) {
-            text("Speler 1 heeft in 1 aanval " + (100-vijandLevens) + " schade gedaan.", 300, 175);
+            text("Speler 1 heeft in 1 aanval " + (100-vijandLevens) + " schade gedaan.", 330, 185);
         } else {
-            text("Speler 1 heeft in " + totaalAanvallenSpeler + " aanvallen " + (100-vijandLevens) + " schade gedaan.", 300, 175);
+            text("Speler 1 heeft in " + totaalAanvallenSpeler + " aanvallen " + (100-vijandLevens) + " schade gedaan.", 330, 185);
         }
         if(totaalAanvallenVijand === 1) {
-            text("Speler 2 heeft in 1 aanval " + (100-spelerLevens) + " schade gedaan.", 300, 200);
+            text("Speler 2 heeft in 1 aanval " + (100-spelerLevens) + " schade gedaan.", 330, 220);
         } else {
-            text("Speler 2 heeft in " + totaalAanvallenVijand + " aanvallen " + (100-spelerLevens) + " schade gedaan.", 300, 200);
+            text("Speler 2 heeft in " + totaalAanvallenVijand + " aanvallen " + (100-spelerLevens) + " schade gedaan.", 330, 220);
         }
     } else {
         background('yellow');
         fill(0, 0, 0);
         textSize(40);
         strokeWeight(1);
-        text("Gelijkspel door het bereiken van het maximale aantal beurten.", 50, 125);
-        textSize(20);
+        text("Gelijkspel door het bereiken van het maximale aantal beurten.", 100, 125);
+        textSize(30);
         if(totaalAanvallenSpeler === 1) {
-            text("Speler 1 heeft in 1 aanval " + (100-vijandLevens) + " schade gedaan.", 300, 175);
+            text("Speler 1 heeft in 1 aanval " + (100-vijandLevens) + " schade gedaan.", 330, 185);
         } else {
-            text("Speler 1 heeft in " + totaalAanvallenSpeler + " aanvallen " + (100-vijandLevens) + " schade gedaan.", 300, 175);
+            text("Speler 1 heeft in " + totaalAanvallenSpeler + " aanvallen " + (100-vijandLevens) + " schade gedaan.", 330, 185);
         }
         if(totaalAanvallenVijand === 1) {
-            text("Speler 2 heeft in 1 aanval " + (100-spelerLevens) + " schade gedaan.", 300, 200);
+            text("Speler 2 heeft in 1 aanval " + (100-spelerLevens) + " schade gedaan.", 330, 220);
         } else {
-            text("Speler 2 heeft in " + totaalAanvallenVijand + " aanvallen " + (100-spelerLevens) + " schade gedaan.", 300, 200);
+            text("Speler 2 heeft in " + totaalAanvallenVijand + " aanvallen " + (100-spelerLevens) + " schade gedaan.", 330, 220);
         }
     }
 
@@ -744,6 +751,47 @@ var gameOverScherm = function() {
         vijandRij = 3;
         spelStatus = SPELEN;
     } else if(mouseIsPressed && mouseX <= 450 && mouseY <= 650 && mouseX >= 50 && mouseY >= 550) {
+        spelStatus = STARTSCHERM;
+    }
+}
+
+//tekent het uitlegscherm
+var uitlegScherm = function () {
+    background('lightgreen');
+    fill(3, 252, 61);
+    rect(50, 550, 200, 100);
+    fill(0,0,0);
+    textSize(50);
+    text("De uitleg", 500, 70);
+    textSize(23);
+    text("Het doel is om de andere speler uit te schakelen. Het spel is opgedeel in beurten. Er zijn twee acties: bewegen en aanvallen.\n\n" + 
+    "- Bewegen: Je kan maximaal 5 stappen zetten per beurt. Om te bewegen kan je of op 'm' klikken of op de knop 'bewegen'. Dan klik je op een blauwgekleurd vakje om erheen te bewegen.\n" +
+    "- Aanvallen: Om aan te vallen moet je naast de vijand staan. Dan druk je op 'n' of de 'aanvallen' knop. Vervolgens moet je het vakje selecteren waar de vijand op staat. " +
+    "Druk op 'spatie' om aan te vallen. Je doet minimaal 22, en maximaal 62 schade. je hebt 1 aanval per beurt.\n\nAls je een actie hebt geselecteerd, maar je wilt terug, " +
+    "dan moet je op de terugknop drukken. Als je klaar bent met je beurt, druk dan op einde beurt. Dan is je tegenstander aan zet.\n" +
+    "Dit gaat zo door totdat beide spelers 20 beurten hebben gehad, of als een speler all zijn levenspunten verloren heeft. In het eerste geval is het een gelijkspel, " +
+    "in het tweede geval wint de speler die nog in leven is.", 100, 100, 1000);
+    textSize(50);
+    text("Terug", 85, 615);
+    if(mouseIsPressed && mouseX <= 250 && mouseY <= 650 && mouseX >= 50 && mouseY >= 550) {
+        spelStatus = STARTSCHERM;
+    }
+}
+
+var creditScherm = function() {
+    background('lightblue');
+    fill(3, 252, 61);
+    rect(50, 550, 200, 100);
+    strokeWeight(1.5);
+    fill(0, 0, 0);
+    textSize(70);
+    text("Het Team", 520, 75);
+    line(0, 100, 1280, 100);
+    textSize(50);
+    text("Thomas van Egmond", 450, 200);
+    text("Witold Kamphorst", 450, 300);
+    text("Terug", 85, 615);
+    if(mouseIsPressed && mouseX <= 250 && mouseY <= 650 && mouseX >= 50 && mouseY >= 550) {
         spelStatus = STARTSCHERM;
     }
 }
@@ -835,9 +883,12 @@ function draw() {
 
 
     case STARTSCHERM:
-        background('blue');
-      	speelButton();
-        uitlegButton();
+        background('lightblue');
+        textSize(70);
+        text("Counter-Strike: Execution Force", 130, 150);
+      	speelKnop();
+        uitlegKnop();
+        creditsKnop();
 
 
 
@@ -856,7 +907,10 @@ function draw() {
         uitlegScherm();
         
 
+    break;
 
+    case CREDITS:
+        creditScherm();
 
     break;
   }
