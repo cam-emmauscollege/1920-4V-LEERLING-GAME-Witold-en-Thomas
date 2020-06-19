@@ -342,6 +342,8 @@ function mouseClicked() {
         beweegActie = false;
         beweegKnopStatus = false;
         beurtVeranderen();
+        veranderKleur(donkerblauw,wit);
+        veranderKleur(lichtblauw,wit);
     }
 }
 
