@@ -66,18 +66,20 @@ var spacebar = false;//wordt de spatiebalk ingedrukt?
 var vijandBinnenBereik = false;//is de vijand binnen het aanvalbereik?
 var aanvallenOver = 1; //max aantal aanvallen per beurt
 var spelerHeeftAangevallen = false; //checkt of de speler net heeft aangevallen
+var totaalAanvallenSpeler = 0; //hoe vaak de speler heeft aangevallen
+var totaalAanvallenVijand = 0; //hoe vaak de vijand heeft aangevallen
 
 var beweegActie = false; // is een beweging gestart?
 var beweegTekst = "Bewegen"; // wleke tekst staat er op de beweegknop
 var beweegKnopStatus = false; //is de beweegknop groen?
-var beweegpunten = 5; //hoever je kan lopen per beurt
-var spelerKolom = 10; // x-positie van speler
-var spelerRij = 17; // y-positie van speler
+var beweegpunten = 0; //hoever je kan lopen per beurt
+var spelerKolom = 0; // x-positie van speler
+var spelerRij = 0; // y-positie van speler
 
-var vijandKolom = 11;   // x-positie van vijand
-var vijandRij = 2;   // y-positie van vijand
+var vijandKolom = 0;   // x-positie van vijand 11
+var vijandRij = 0;   // y-positie van vijand 3
 
-var spelerBeurt = 1; // hoeveel beurten heeft de speler gehad
+var spelerBeurt = 0; // hoeveel beurten heeft de speler gehad
 var vijandBeurt = 0; //hoeveel beurten heeft de vijand(speler2) gehad
 var maxBeurten = 20; //maximale aantal beurten per spel
 
@@ -98,7 +100,7 @@ var standaarSchadeArray = [30,40,50]  // WIP -- schade nu is testschade
 var welkeAanval = 0;
 
 var veld = [
-        [1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1], //1
+        [1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1], //1 - 26 kolommen
         [1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1], //2
         [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //3
         [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //4
@@ -158,6 +160,16 @@ var speelButton = function() {
     text("Spelen",560,115,730,170);
 
     if(mouseIsPressed && mouseX <= xPlayButton + 200 && mouseY <= yPlayButton + 80 && mouseX >= xPlayButton && mouseY >= yPlayButton) {
+        spelerLevens = 100;
+        vijandLevens = 100;
+        spelerBeurt= 1;
+        vijandBeurt = 0;
+        beweegpunten = 5;
+        aanvallenOver = 1;
+        spelerKolom = 10;
+        spelerRij = 17;
+        vijandKolom = 11;
+        vijandRij = 3;
         spelStatus = SPELEN;
     } 
 }
@@ -239,7 +251,7 @@ var beweegKnopTekenen = function(r,g,b) {
 var beweegKnop = function() {
     beweegKnopTekenen(255,255,255);
 
-    if(mouseIsPressed) { //twee methodes om te gaan bewegen, de knop en de m-toets
+    if(mouseIsPressed) { //twee methodes om te gaan bewegen, de knop en de m-toets, ook als caps lock aan staat
         if (mouseButton === LEFT && mouseY >= 260 && mouseY <= 310 && mouseX >= 1050 && mouseX <= 1270 && beweegpunten > 0) {
             beweegActie = true;
             beweegKnopStatus = true;
@@ -248,7 +260,7 @@ var beweegKnop = function() {
         }
     } 
     if(keyIsPressed) {
-        if(key === "m" && beweegpunten > 0) {
+        if((key === "m" || key === "M") && beweegpunten > 0) {
             beweegActie = true;
             beweegKnopStatus = true;
             aanvalActie = false;
@@ -313,7 +325,7 @@ var aanvalKnopTekenen = function(r,g,b) {
 var aanvalKnop = function() {
     aanvalKnopTekenen(255,255,255);
 
-    if(mouseIsPressed && aanvallenOver > 0) { //twee methodes om te gaan aanvallen, knop en n-toets
+    if(mouseIsPressed && aanvallenOver > 0) { //twee methodes om te gaan aanvallen, knop en n-toets, ook als caps lock aan staat
         if (mouseButton === LEFT && mouseY >= 330 && mouseY <= 380 && mouseX >= 1050 && mouseX <= 1270){
             aanvalActie = true;
             aanvalKnopStatus = true;
@@ -321,7 +333,7 @@ var aanvalKnop = function() {
             beweegKnopStatus = false;
         }
     } else if(keyIsPressed){
-            if(key === "n" && aanvallenOver > 0) {
+            if((key === "n" || key === "N") && aanvallenOver > 0) {
             aanvalActie = true;
             aanvalKnopStatus = true;
             beweegActie = false;
@@ -568,7 +580,7 @@ var veranderKleur = function(oudekleur,nieuwekleur) {
 
 //wanneer is het gameover?
 var gameOver = function() {
-    if(vijandLevens <=  0 || spelerLevens <= 0 || (spelerBeurten === 20 && vijandBeurten === 20)) {
+    if(vijandLevens <=  0 || spelerLevens <= 0 || spelerBeurt > 20) {
         spelStatus = GAMEOVER;
     } 
 }
@@ -585,9 +597,11 @@ var schadeDoenTegenVijand = function() {
     hoeveelSchade(standaarSchadeArray[welkeAanval]);
     if(spelerTurn === true) {
         vijandLevens = vijandLevens - schade;
+        totaalAanvallenSpeler++;
     }
     if(vijandTurn === true) {
         spelerLevens = spelerLevens - schade;
+        totaalAanvallenVijand++;
     }
     levensVanVijand();
     aanvalKlaar = true;
@@ -654,19 +668,83 @@ var bewegen = function(wieIsSpelerKolom,wieIsSpelerRij,wieIsVijandKolom,wieIsVij
 //tekent het gameoverscherm als de game voorbij is
 var gameOverScherm = function() {
     createCanvas(1280, 720);
-    background("blue");
+    if(vijandLevens <= 0) {
+        background('green');
+        fill(0, 0, 0);
+        textSize(40);
+        strokeWeight(1);
+        text("Speler 1 heeft gewonnen door de tegenstander uit te schakelen", 50, 125);
+        textSize(20);
+        if(totaalAanvallenSpeler === 1) {
+            text("Speler 1 heeft in 1 aanval " + (100-vijandLevens) + " schade gedaan.", 300, 175);
+        } else {
+            text("Speler 1 heeft in " + totaalAanvallenSpeler + " aanvallen " + (100-vijandLevens) + " schade gedaan.", 300, 175);
+        }
+        if(totaalAanvallenVijand === 1) {
+            text("Speler 2 heeft in 1 aanval " + (100-spelerLevens) + " schade gedaan.", 300, 200);
+        } else {
+            text("Speler 2 heeft in " + totaalAanvallenVijand + " aanvallen " + (100-spelerLevens) + " schade gedaan.", 300, 200);
+        }
+    } else if(spelerLevens <= 0) {
+        background('red');
+        fill(0, 0, 0);
+        textSize(40);
+        strokeWeight(1);
+        text("Speler 2 heeft gewonnen door de tegenstander uit te schakelen", 50, 125);
+        textSize(20);
+        if(totaalAanvallenSpeler === 1) {
+            text("Speler 1 heeft in 1 aanval " + (100-vijandLevens) + " schade gedaan.", 300, 175);
+        } else {
+            text("Speler 1 heeft in " + totaalAanvallenSpeler + " aanvallen " + (100-vijandLevens) + " schade gedaan.", 300, 175);
+        }
+        if(totaalAanvallenVijand === 1) {
+            text("Speler 2 heeft in 1 aanval " + (100-spelerLevens) + " schade gedaan.", 300, 200);
+        } else {
+            text("Speler 2 heeft in " + totaalAanvallenVijand + " aanvallen " + (100-spelerLevens) + " schade gedaan.", 300, 200);
+        }
+    } else {
+        background('yellow');
+        fill(0, 0, 0);
+        textSize(40);
+        strokeWeight(1);
+        text("Gelijkspel door het bereiken van het maximale aantal beurten.", 50, 125);
+        textSize(20);
+        if(totaalAanvallenSpeler === 1) {
+            text("Speler 1 heeft in 1 aanval " + (100-vijandLevens) + " schade gedaan.", 300, 175);
+        } else {
+            text("Speler 1 heeft in " + totaalAanvallenSpeler + " aanvallen " + (100-vijandLevens) + " schade gedaan.", 300, 175);
+        }
+        if(totaalAanvallenVijand === 1) {
+            text("Speler 2 heeft in 1 aanval " + (100-spelerLevens) + " schade gedaan.", 300, 200);
+        } else {
+            text("Speler 2 heeft in " + totaalAanvallenVijand + " aanvallen " + (100-spelerLevens) + " schade gedaan.", 300, 200);
+        }
+    }
+
     fill(3, 252, 61);
-    rect(400,100,500, 100);
+    rect(50, 550, 400, 100);
+    rect(830, 550, 400, 100);
     fill(0,0,0);
     textSize(50);
-    text("Opnieuw Spelen",470,125,730,170);
-    vijandLevens = 100;
-    spelerLevens = 100;
+    text("Hoofdmenu", 112, 615);
+    text("Opnieuw Spelen", 844, 615/*, 730, 170*/);
     spelerTurn = true;
     vijandTurn = false;
 
-    if(mouseIsPressed && mouseX <= 900 && mouseY <= 200 && mouseX >= 400 && mouseY >= 100) {
+    if(mouseIsPressed && mouseX <= 1230 && mouseY <= 650 && mouseX >= 830 && mouseY >= 550) {
+        spelerLevens = 100;
+        vijandLevens = 100;
+        spelerBeurt= 1;
+        vijandBeurt = 0;
+        beweegpunten = 5;
+        aanvallenOver = 1;
+        spelerKolom = 10;
+        spelerRij = 17;
+        vijandKolom = 11;
+        vijandRij = 3;
         spelStatus = SPELEN;
+    } else if(mouseIsPressed && mouseX <= 450 && mouseY <= 650 && mouseX >= 50 && mouseY >= 550) {
+        spelStatus = STARTSCHERM;
     }
 }
 
@@ -757,6 +835,7 @@ function draw() {
 
 
     case STARTSCHERM:
+        background('blue');
       	speelButton();
         uitlegButton();
 
